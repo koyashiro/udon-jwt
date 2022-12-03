@@ -1,7 +1,9 @@
 {
     "name": "Koyashiro.UdonJwt.Runtime",
     "references": [
-        "UdonSharp.Runtime"
+        "UdonSharp.Runtime",
+        "Koyashiro.UdonJson.Runtime",
+        "Koyashiro.UdonEncoding.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

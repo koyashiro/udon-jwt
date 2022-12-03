@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Koyashiro.UdonJwt
+namespace Koyashiro.UdonJwt.Numerics
 {
     public static class UnsignedBigInteger
     {
@@ -15,6 +15,20 @@ namespace Koyashiro.UdonJwt
                 var c = (uint)input[4 * i + 2] << 8;
                 var d = (uint)input[4 * i + 3];
                 result[result.Length - 1 - i] = a | b | c | d;
+            }
+            return result;
+        }
+
+        public static byte[] ToBytes(uint[] input)
+        {
+            var result = new byte[input.Length * 4];
+            for (var i = 0; i < input.Length; i++)
+            {
+                var x = input[input.Length - 1 - i];
+                result[4 * i] = (byte)((x >> 24) & 0xff);
+                result[4 * i + 1] = (byte)((x >> 16) & 0xff);
+                result[4 * i + 2] = (byte)((x >> 8) & 0xff);
+                result[4 * i + 3] = (byte)(x & 0xff);
             }
             return result;
         }
@@ -67,6 +81,34 @@ namespace Koyashiro.UdonJwt
                 }
             }
             return product;
+        }
+
+        public static uint[] Inverse(uint[] value, out int fixedPointLength)
+        {
+            fixedPointLength = 2 * value.Length + 1;
+            var length = 2 * fixedPointLength;
+
+            var v = new uint[length];
+            Array.Copy(value, v, value.Length);
+
+            var two = new uint[length];
+            two[0] = 2;
+            UnsignedBigInteger.ShiftLeftAssign(two, fixedPointLength);
+
+            var buf = new uint[length];
+            buf[0] = 1;
+            UnsignedBigInteger.ShiftLeftAssign(buf, fixedPointLength / 2);
+
+            var prevBuf = new uint[length];
+
+            while (!UnsignedBigInteger.Equals(buf, prevBuf))
+            {
+                Array.Copy(buf, prevBuf, length);
+                buf = UnsignedBigInteger.Multiply(buf, UnsignedBigInteger.Subtract(two, UnsignedBigInteger.Multiply(v, buf)));
+                UnsignedBigInteger.ShiftRightAssign(buf, fixedPointLength);
+            }
+
+            return buf;
         }
 
         public static uint[] RemainderWithReciprocal(uint[] dividend, uint[] divisor, uint[] reciprocalOfDivisor, int fixedPointLength)
@@ -162,13 +204,6 @@ namespace Koyashiro.UdonJwt
             {
                 s += input[i].ToString("x8");
             }
-
-            s += "(0x";
-            for (var i = input.Length - 1; i >= 0; i--)
-            {
-                s += input[i].ToString("x8");
-            }
-            s += ")";
             return s;
         }
     }

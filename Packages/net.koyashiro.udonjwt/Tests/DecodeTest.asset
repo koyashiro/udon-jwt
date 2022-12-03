@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
-  m_Name: UnsignedBigIntegerTest
+  m_Name: DecodeTest
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: f58df24d3d93cc14a815afdb3f922db6,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 5124f3027d77b5e4991800f222e35f1e,
     type: 2}
   udonAssembly: 
   assemblyError: 
-  sourceCsScript: {fileID: 11500000, guid: dc658e3e104475e48a309a88f452fd90, type: 3}
+  sourceCsScript: {fileID: 11500000, guid: db31691b6ed6c5c498c41afca7ecac99, type: 3}
   scriptVersion: 2
   compiledVersion: 2
   behaviourSyncMode: 0
   hasInteractEvent: 0
-  scriptID: 990432504211351980
+  scriptID: 676834210438790800
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -50,19 +50,19 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: _modPowCalculator
+      Data: _decoder
     - Name: $v
       Entry: 7
       Data: 2|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: _modPowCalculator
+      Data: _decoder
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 3|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Koyashiro.UdonJwt.ModPowCalculator, Koyashiro.UdonJwt.Runtime
+      Data: Koyashiro.UdonJwt.JwtDecoder, Koyashiro.UdonJwt.Runtime
     - Name: 
       Entry: 8
       Data: 
