@@ -1,10 +1,8 @@
 {
-    "name": "Koyashiro.UdonJwt.Tests",
+    "name": "Koyashiro.UdonJwt.Editor",
     "references": [
         "UdonSharp.Runtime",
-        "Koyashiro.UdonJson.Runtime",
-        "Koyashiro.UdonJwt.Runtime",
-        "Koyashiro.UdonTest.Runtime"
+        "Koyashiro.UdonJwt.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

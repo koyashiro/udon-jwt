@@ -10,20 +10,16 @@ namespace Koyashiro.UdonJwt.Verifier
         [SerializeField]
         private ModPowCalculator _modPowCalculator;
 
-        [SerializeField]
-        [HideInInspector]
+        [SerializeField, HideInInspector]
         private int _e;
 
-        [SerializeField]
-        [HideInInspector]
+        [SerializeField, HideInInspector]
         private uint[] _n;
 
-        [SerializeField]
-        [HideInInspector]
+        [SerializeField, HideInInspector]
         private uint[] _nInverse;
 
-        [SerializeField]
-        [HideInInspector]
+        [SerializeField, HideInInspector]
         private int _fixedPointLength;
 
         private string _headerBase64;

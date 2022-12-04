@@ -15,8 +15,21 @@ namespace Koyashiro.UdonJwt
         #region RS256
         [SerializeField]
         private RS256Verifier _rs256Verifier;
+
         [SerializeField, TextArea(10, 20)]
         private string _publicKey;
+
+        [SerializeField, HideInInspector]
+        private int _e;
+
+        [SerializeField, HideInInspector]
+        private uint[] _n;
+
+        [SerializeField, HideInInspector]
+        private uint[] _nInverse;
+
+        [SerializeField, HideInInspector]
+        private int _fixedPointLength;
         #endregion
 
         private UdonSharpBehaviour _callbackThis;
@@ -31,11 +44,27 @@ namespace Koyashiro.UdonJwt
 
         public string PublicKey => _publicKey;
 
+        public int E => _e;
+
+        public uint[] N => _n;
+
+        public uint[] NInverse => _nInverse;
+
+        public int FixedPointLength => _fixedPointLength;
+
         public bool Result => _result;
 
         public UdonJsonValue Header => _header;
 
         public UdonJsonValue Payload => _payload;
+
+        public void SetPublicKey(int e, uint[] n, uint[] nInverse, int fixedPointLength)
+        {
+            _e = e;
+            _n = n;
+            _nInverse = nInverse;
+            _fixedPointLength = fixedPointLength;
+        }
 
         public void Decode(string token, UdonSharpBehaviour callbackThis, string callbackEventName)
         {
@@ -97,7 +126,6 @@ namespace Koyashiro.UdonJwt
         {
             _result = _rs256Verifier.Result;
             _callbackThis.SendCustomEventDelayedFrames(_callbackEventName, 1);
-            Destroy(gameObject);
         }
 
         public JwtDecoder Clone()
