@@ -64,6 +64,7 @@ namespace Koyashiro.UdonJwt
             _n = n;
             _nInverse = nInverse;
             _fixedPointLength = fixedPointLength;
+            _rs256Verifier.SetPublicKey(e, n, nInverse, fixedPointLength);
         }
 
         public void Decode(string token, UdonSharpBehaviour callbackThis, string callbackEventName)
@@ -126,20 +127,6 @@ namespace Koyashiro.UdonJwt
         {
             _result = _rs256Verifier.Result;
             _callbackThis.SendCustomEventDelayedFrames(_callbackEventName, 1);
-        }
-
-        public JwtDecoder Clone()
-        {
-            var decoder = Instantiate(gameObject).GetComponent<JwtDecoder>();
-            decoder._algorithmKind = _algorithmKind;
-            switch (_algorithmKind)
-            {
-                case JwtAlgorithmKind.RS256:
-                    decoder._publicKey = _publicKey;
-                    decoder._rs256Verifier.SetPublicKey(_rs256Verifier.E, _rs256Verifier.N, _rs256Verifier.NInverse, _rs256Verifier.FixedPointLength);
-                    break;
-            }
-            return decoder;
         }
 
         public static string ToBase64(string base64Url)

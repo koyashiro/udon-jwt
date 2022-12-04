@@ -30,7 +30,8 @@ namespace Koyashiro.UdonJwt.Editor
                         var nResized = new uint[nInverse.Length];
                         Array.Copy(n, nResized, n.Length);
                         jwtDecoder.SetPublicKey(e, nResized, nInverse, fixedPointLength);
-                        jwtDecoder.RS256Verifier.SetPublicKey(e, nResized, nInverse, fixedPointLength);
+                        EditorUtility.SetDirty(jwtDecoder);
+                        EditorUtility.SetDirty(jwtDecoder.RS256Verifier);
                         break;
                 }
             }
@@ -40,6 +41,7 @@ namespace Koyashiro.UdonJwt.Editor
                 EditorGUI.BeginDisabledGroup(true);
                 EditorGUILayout.TextField(nameof(jwtDecoder.E), $"0x{jwtDecoder.E:x8}");
                 EditorGUILayout.TextField(nameof(jwtDecoder.N), UnsignedBigInteger.ToHexString(jwtDecoder.N));
+                EditorGUILayout.TextField(nameof(jwtDecoder.NInverse), UnsignedBigInteger.ToHexString(jwtDecoder.NInverse));
                 EditorGUI.EndDisabledGroup();
             }
         }
