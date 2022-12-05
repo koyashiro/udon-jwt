@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: JwtDecoder
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 8c4f9378e54531e4b9d0ce64f50fff9e,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 2c921d80b7325624cb91172a1523ae3f,
     type: 2}
   udonAssembly: 
   assemblyError: 
