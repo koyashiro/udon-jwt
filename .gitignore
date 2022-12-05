@@ -66,3 +66,6 @@ Assets/
 
 # Exports
 Exports/
+
+# Visual Studio
+.vsconfig
