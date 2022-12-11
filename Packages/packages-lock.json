@@ -215,6 +215,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "net.koyashiro.udonjwt.tests": {
+      "version": "file:net.koyashiro.udonjwt.tests",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "net.koyashiro.udonlist": {
       "version": "file:net.koyashiro.udonlist",
       "depth": 0,
