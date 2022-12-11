@@ -31,6 +31,7 @@ namespace Koyashiro.UdonJwt.Numerics
         public uint[] _nPrime;
 
         private int _e;
+        private int _totalStep;
         private uint[] _base;
         private uint[] _buf;
         private MontgomeryModPowCalculatorCallback _callback;
@@ -62,6 +63,11 @@ namespace Koyashiro.UdonJwt.Numerics
         public void ModPow(uint[] value, int exponent, MontgomeryModPowCalculatorCallback callback)
         {
             _e = exponent;
+            _totalStep = 1;
+            for (var e = exponent; e > 0; e >>= 1)
+            {
+                _totalStep += 1;
+            }
             _base = MontgomeryReduction(UnsignedBigInteger.Multiply(value, _r2));
             _buf = MontgomeryReduction(_r2);
             _callback = callback;
@@ -76,11 +82,12 @@ namespace Koyashiro.UdonJwt.Numerics
                 if (_e % 2 != 0)
                 {
                     _buf = MontgomeryReduction(UnsignedBigInteger.Multiply(_buf, _base));
-                    Debug.Log(UnsignedBigInteger.ToHexString(_buf));
                 }
                 _base = MontgomeryReduction(UnsignedBigInteger.Multiply(_base, _base));
                 _e >>= 1;
+                _callback.Progress += 1f / (float)_totalStep;
 
+                _callback.SendCustomEventDelayedFrames(nameof(_callback.OnProgress), 0);
                 SendCustomEventDelayedFrames(nameof(_Loop), 0);
             }
             else
@@ -92,6 +99,8 @@ namespace Koyashiro.UdonJwt.Numerics
         public void _End()
         {
             _callback.Result = MontgomeryReduction(_buf);
+            _callback.Progress = 1;
+            _callback.SendCustomEventDelayedFrames(nameof(_callback.OnProgress), 0);
             _callback.SendCustomEventDelayedFrames(nameof(_callback.OnEnd), 0);
         }
 
