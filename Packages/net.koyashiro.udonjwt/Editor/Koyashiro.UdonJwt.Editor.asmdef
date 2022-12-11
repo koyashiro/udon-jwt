@@ -2,7 +2,7 @@
     "name": "Koyashiro.UdonJwt.Editor",
     "references": [
         "UdonSharp.Runtime",
-        "Koyashiro.UdonJwt.Runtime"
+        "Koyashiro.UdonJwt"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

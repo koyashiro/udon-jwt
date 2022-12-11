@@ -10,18 +10,18 @@
       "version": "0.1.17"
     },
     "net.koyashiro.udontest": {
-      "version": "0.1.1"
-    },
-    "net.koyashiro.udonjson": {
-      "version": "0.7.0"
+      "version": "0.4.1"
     },
     "net.koyashiro.udonencoding": {
-      "version": "0.2.0"
+      "version": "0.3.0"
+    },
+    "net.koyashiro.udonjson": {
+      "version": "0.8.0"
     }
   },
   "locked": {
     "com.vrchat.udonsharp": {
-      "version": "1.1.5",
+      "version": "1.1.6",
       "dependencies": {
         "com.vrchat.worlds": "3.1.x"
       }
@@ -33,7 +33,8 @@
       }
     },
     "com.vrchat.base": {
-      "version": "3.1.10"
+      "version": "3.1.10",
+      "dependencies": {}
     },
     "com.vrchat.clientsim": {
       "version": "1.2.2",
@@ -45,28 +46,16 @@
       "version": "0.1.17"
     },
     "net.koyashiro.udontest": {
-      "version": "0.1.1",
+      "version": "0.4.1",
       "dependencies": {
-        "com.vrchat.udonsharp": "1.1.5"
-      }
-    },
-    "net.koyashiro.udonjson": {
-      "version": "0.7.0",
-      "dependencies": {
-        "com.vrchat.udonsharp": "1.1.5",
-        "net.koyashiro.udondictionary": "0.5.0",
-        "net.koyashiro.udonexception": "0.2.0",
-        "net.koyashiro.udonlist": "0.8.1",
-        "net.koyashiro.udontest": "0.1.1"
+        "com.vrchat.udonsharp": "1.1.6"
       }
     },
     "net.koyashiro.udondictionary": {
-      "version": "0.5.0",
+      "version": "0.6.0",
       "dependencies": {
-        "com.vrchat.udonsharp": "1.1.5",
-        "net.koyashiro.udonexception": "0.2.0",
-        "net.koyashiro.udonlist": "0.8.1",
-        "net.koyashiro.udontest": "0.1.1"
+        "com.vrchat.udonsharp": "1.1.6",
+        "net.koyashiro.udonlist": "0.12.3"
       }
     },
     "net.koyashiro.udonexception": {
@@ -76,19 +65,23 @@
       }
     },
     "net.koyashiro.udonlist": {
-      "version": "0.8.1",
+      "version": "0.12.3",
       "dependencies": {
-        "com.vrchat.udonsharp": "1.1.5",
-        "net.koyashiro.udonexception": "0.2.0",
-        "net.koyashiro.udontest": "0.1.1"
+        "com.vrchat.udonsharp": "1.1.6"
       }
     },
     "net.koyashiro.udonencoding": {
-      "version": "0.2.0",
+      "version": "0.3.0",
       "dependencies": {
-        "com.vrchat.udonsharp": "1.1.5",
-        "net.koyashiro.udonexception": "0.2.0",
-        "net.koyashiro.udontest": "0.1.1"
+        "com.vrchat.udonsharp": "1.1.6"
+      }
+    },
+    "net.koyashiro.udonjson": {
+      "version": "0.8.0",
+      "dependencies": {
+        "com.vrchat.udonsharp": "1.1.6",
+        "net.koyashiro.udondictionary": "0.6.0",
+        "net.koyashiro.udonlist": "0.12.3"
       }
     }
   }

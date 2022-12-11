@@ -668,7 +668,7 @@ MonoBehaviour:
       Data: 43|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Koyashiro.UdonJson.UdonJsonValue, Koyashiro.UdonJson.Runtime
+      Data: Koyashiro.UdonJson.UdonJsonValue, Koyashiro.UdonJson
     - Name: 
       Entry: 8
       Data: 
