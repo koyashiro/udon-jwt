@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
-  m_Name: DecodeTest
+  m_Name: MontgomeryTest
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 189414aad2204e6459d634dbd146889f,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 57924d6c6f102d44e9a9fee3a34ea69b,
     type: 2}
   udonAssembly: 
   assemblyError: 
-  sourceCsScript: {fileID: 11500000, guid: db31691b6ed6c5c498c41afca7ecac99, type: 3}
+  sourceCsScript: {fileID: 11500000, guid: 821b025e0b8ba8640b8b17e4a3c98c08, type: 3}
   scriptVersion: 2
   compiledVersion: 2
   behaviourSyncMode: 0
   hasInteractEvent: 0
-  scriptID: 676834210438790800
+  scriptID: -241279167383556674
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -50,19 +50,19 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: _decoder
+      Data: _montgomery
     - Name: $v
       Entry: 7
       Data: 2|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: _decoder
+      Data: _montgomery
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 3|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Koyashiro.UdonJwt.JwtDecoder, Koyashiro.UdonJwt
+      Data: Koyashiro.UdonJwt.Numerics.Montgomery, Koyashiro.UdonJwt
     - Name: 
       Entry: 8
       Data: 

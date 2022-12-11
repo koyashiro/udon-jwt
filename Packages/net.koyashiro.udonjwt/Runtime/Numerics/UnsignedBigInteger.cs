@@ -1,5 +1,3 @@
-using System;
-
 namespace Koyashiro.UdonJwt.Numerics
 {
     public static class UnsignedBigInteger
@@ -32,111 +30,82 @@ namespace Koyashiro.UdonJwt.Numerics
             return result;
         }
 
-        public static uint[] Add(uint[] left, uint right)
+        public static uint[] Add(uint[] left, uint[] right)
         {
-            var sum = new uint[left.Length];
-            var carry = (ulong)right;
-            for (var i = 0; i < left.Length; i++)
+            var leftLength = left.Length;
+            var rightLength = right.Length;
+
+            var sum = new uint[leftLength + 1];
+
+            var carry = 0UL;
+            for (var i = 0; i < rightLength; i++)
             {
-                var digit = (ulong)left[i] + carry;
-                sum[i] = (uint)((digit) & 0xffffffff);
-                carry = digit >> 32;
+                var s = (ulong)left[i] + (ulong)right[i] + carry;
+                sum[i] = (uint)(s << 32 >> 32);
+                carry = s >> 32;
             }
+
+            for (var i = rightLength; i < leftLength; i++)
+            {
+                var s = (ulong)left[i] + carry;
+                sum[i] = (uint)(s << 32 >> 32);
+                carry = s >> 32;
+            }
+
+            sum[leftLength] = (uint)carry;
+
             return sum;
         }
 
         public static uint[] Subtract(uint[] left, uint[] right)
         {
+            var leftLength = left.Length;
+            var rightLength = right.Length;
+
             var difference = new uint[left.Length];
+
             var carry = 1UL;
-            for (var i = 0; i < left.Length; i++)
+            for (var i = 0; i < rightLength; i++)
             {
-                var digit = (ulong)left[i] + (ulong)(~right[i]) + carry;
-                difference[i] = (uint)((digit) & 0xffffffff);
-                carry = digit >> 32;
+                var s = (ulong)left[i] + (ulong)(~right[i]) + carry;
+                difference[i] = (uint)(s << 32 >> 32);
+                carry = s >> 32;
             }
+
+            for (var i = rightLength; i < left.Length; i++)
+            {
+                var s = (ulong)left[i] + (ulong)(~0U) + carry;
+                difference[i] = (uint)(s << 32 >> 32);
+                carry = s >> 32;
+            }
+
             return difference;
         }
 
         public static uint[] Multiply(uint[] left, uint[] right)
         {
-            var product = new uint[left.Length];
-            for (var i = 0; i < left.Length; i++)
+            var buf = new uint[left.Length + right.Length];
+            for (var i = 0; i < right.Length; i++)
             {
-                var partialProd = new uint[left.Length];
+                var partialProd = new uint[left.Length + 1];
                 var carry = 0UL;
-                for (var j = 0; j < left.Length - i; j++)
-                {
-                    var p = (ulong)left[j] * (ulong)right[i] + carry;
-                    partialProd[i + j] = (uint)(p << 32 >> 32);
-                    carry = p >> 32;
-                }
-                carry = 0UL;
                 for (var j = 0; j < left.Length; j++)
                 {
-                    var digit = (ulong)product[j] + (ulong)partialProd[j] + carry;
-                    product[j] = (uint)(digit << 32 >> 32);
-                    carry = digit >> 32;
+                    var p = (ulong)left[j] * (ulong)right[i] + carry;
+                    partialProd[j] = (uint)(p << 32 >> 32);
+                    carry = p >> 32;
+                }
+                partialProd[left.Length] = (uint)carry;
+
+                carry = 0UL;
+                for (var j = 0; j < partialProd.Length; j++)
+                {
+                    var s = (ulong)buf[i + j] + (ulong)partialProd[j] + carry;
+                    buf[i + j] = (uint)(s << 32 >> 32);
+                    carry = s >> 32;
                 }
             }
-            return product;
-        }
-
-        public static uint[] Inverse(uint[] value, out int fixedPointLength)
-        {
-            fixedPointLength = 2 * value.Length + 1;
-            var length = 2 * fixedPointLength;
-
-            var v = new uint[length];
-            Array.Copy(value, v, value.Length);
-
-            var two = new uint[length];
-            two[0] = 2;
-            UnsignedBigInteger.ShiftLeftAssign(two, fixedPointLength);
-
-            var buf = new uint[length];
-            buf[0] = 1;
-            UnsignedBigInteger.ShiftLeftAssign(buf, fixedPointLength / 2);
-
-            var prevBuf = new uint[length];
-
-            while (!UnsignedBigInteger.Equals(buf, prevBuf))
-            {
-                Array.Copy(buf, prevBuf, length);
-                buf = UnsignedBigInteger.Multiply(buf, UnsignedBigInteger.Subtract(two, UnsignedBigInteger.Multiply(v, buf)));
-                UnsignedBigInteger.ShiftRightAssign(buf, fixedPointLength);
-            }
-
             return buf;
-        }
-
-        public static uint[] RemainderWithReciprocal(uint[] dividend, uint[] divisor, uint[] reciprocalOfDivisor, int fixedPointLength)
-        {
-            var quotient = Multiply(dividend, reciprocalOfDivisor);
-            ShiftRightAssign(quotient, fixedPointLength);
-            var mulLow = Multiply(divisor, quotient);
-            var mulHigh = Multiply(divisor, Add(quotient, 1));
-
-            if (GreaterThan(mulHigh, dividend))
-            {
-                return Subtract(dividend, mulLow);
-            }
-            else
-            {
-                return Subtract(dividend, mulHigh);
-            }
-        }
-
-        public static void ShiftRightAssign(uint[] value, int count)
-        {
-            Array.ConstrainedCopy(value, count, value, 0, value.Length - count);
-            Array.Copy(new uint[count], 0, value, value.Length - count, count);
-        }
-
-        public static void ShiftLeftAssign(uint[] value, int count)
-        {
-            Array.Copy(value, 0, value, count, value.Length - count);
-            Array.Copy(new uint[count], 0, value, 0, count);
         }
 
         public static bool Equals(uint[] left, uint[] right)
@@ -151,40 +120,76 @@ namespace Koyashiro.UdonJwt.Numerics
             return true;
         }
 
-        public static bool GreaterThan(uint[] left, uint[] right)
-        {
-            for (var i = left.Length - 1; i >= 0; i--)
-            {
-                var l = left[i];
-                var r = right[i];
-                if (l > r)
-                {
-                    return true;
-                }
-                else if (l < r)
-                {
-                    return false;
-                }
-            }
-            return false;
-        }
-
         public static bool GreaterThanOrEqual(uint[] left, uint[] right)
         {
-            for (var i = left.Length - 1; i >= 0; i--)
+            var leftLength = left.Length;
+            var rightLength = right.Length;
+
+            if (leftLength == rightLength)
             {
-                var l = left[i];
-                var r = right[i];
-                if (l > r)
+                for (var i = left.Length - 1; i >= 0; i--)
                 {
-                    return true;
+                    var l = left[i];
+                    var r = right[i];
+                    if (l > r)
+                    {
+                        return true;
+                    }
+                    else if (l < r)
+                    {
+                        return false;
+                    }
                 }
-                else if (l < r)
-                {
-                    return false;
-                }
+                return true;
             }
-            return true;
+            else if (leftLength > rightLength)
+            {
+                for (var i = leftLength - 1; i >= rightLength; i--)
+                {
+                    if (left[i] != 0)
+                    {
+                        return true;
+                    }
+                }
+                for (var i = rightLength - 1; i >= 0; i--)
+                {
+                    var l = left[i];
+                    var r = right[i];
+                    if (l > r)
+                    {
+                        return true;
+                    }
+                    else if (l < r)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else
+            {
+                for (var i = rightLength - 1; i >= leftLength; i--)
+                {
+                    if (right[i] != 0)
+                    {
+                        return true;
+                    }
+                }
+                for (var i = leftLength - 1; i >= 0; i--)
+                {
+                    var l = left[i];
+                    var r = right[i];
+                    if (l > r)
+                    {
+                        return true;
+                    }
+                    else if (l < r)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
         }
 
         public static string ToHexString(uint[] input)

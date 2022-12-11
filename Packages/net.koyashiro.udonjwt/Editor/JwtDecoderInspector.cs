@@ -17,24 +17,24 @@ namespace Koyashiro.UdonJwt.Editor
 
             if (GUILayout.Button("Set Public Key"))
             {
-                switch (jwtDecoder.AlgorithmKind)
-                {
-                    case JwtAlgorithmKind.RS256:
-                        if (!PublicKeyDecoder.TryDecode(jwtDecoder.PublicKey, out var nBytes, out var e))
-                        {
-                            Debug.LogError("[UdonJwt] Failed to parse public key");
-                            return;
-                        }
+                // switch (jwtDecoder.AlgorithmKind)
+                // {
+                //     case JwtAlgorithmKind.RS256:
+                //         if (!PublicKeyDecoder.TryDecode(jwtDecoder.PublicKey, out var nBytes, out var e))
+                //         {
+                //             Debug.LogError("[UdonJwt] Failed to parse public key");
+                //             return;
+                //         }
 
-                        var n = UnsignedBigInteger.FromBytes(nBytes);
-                        var nInverse = UnsignedBigInteger.Inverse(n, out var fixedPointLength);
-                        var nResized = new uint[nInverse.Length];
-                        Array.Copy(n, nResized, n.Length);
-                        jwtDecoder.SetPublicKey(e, nResized, nInverse, fixedPointLength);
-                        EditorUtility.SetDirty(jwtDecoder);
-                        EditorUtility.SetDirty(jwtDecoder.RS256Verifier);
-                        break;
-                }
+                //         var n = UnsignedBigInteger.FromBytes(nBytes);
+                //         var nInverse = UnsignedBigInteger.Inverse(n, out var fixedPointLength);
+                //         var nResized = new uint[nInverse.Length];
+                //         Array.Copy(n, nResized, n.Length);
+                //         jwtDecoder.SetPublicKey(e, nResized, nInverse, fixedPointLength);
+                //         EditorUtility.SetDirty(jwtDecoder);
+                //         EditorUtility.SetDirty(jwtDecoder.RS256Verifier);
+                //         break;
+                // }
             }
 
             if (jwtDecoder.E != 0 && jwtDecoder.N != null)
