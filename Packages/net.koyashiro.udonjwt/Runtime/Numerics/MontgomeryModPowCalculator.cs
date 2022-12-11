@@ -30,15 +30,10 @@ namespace Koyashiro.UdonJwt.Numerics
         [SerializeField]
         public uint[] _nPrime;
 
-        /// <summary>
-        /// Callback
-        /// </summary>
-        [SerializeField]
-        public MontgomeryModPowCalculatorCallback _callback;
-
         private int _e;
         private uint[] _base;
         private uint[] _buf;
+        private MontgomeryModPowCalculatorCallback _callback;
 
         public uint[] R
         {
@@ -64,11 +59,12 @@ namespace Koyashiro.UdonJwt.Numerics
             set => _nPrime = value;
         }
 
-        public void ModPow(uint[] value, int exponent)
+        public void ModPow(uint[] value, int exponent, MontgomeryModPowCalculatorCallback callback)
         {
             _e = exponent;
             _base = MontgomeryReduction(UnsignedBigInteger.Multiply(value, _r2));
             _buf = MontgomeryReduction(_r2);
+            _callback = callback;
 
             SendCustomEventDelayedFrames(nameof(_Loop), 0);
         }
