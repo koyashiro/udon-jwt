@@ -30,6 +30,30 @@ namespace Koyashiro.UdonJwt.Numerics
         [SerializeField]
         public uint[] _nPrime = new uint[] { 0x90d169d7, 0x13c89bee, 0x8c2eec28, 0xd8ac3289, 0x334b7e51, 0x8fb7fe44, 0x21bae550, 0xd4042ff0, 0xba59aa27, 0xf643c578, 0x6e92b0fb, 0x2a19df93, 0xa975d66a, 0xfde5a9a6, 0x73a65179, 0xc6adab28, 0xd9796c7a, 0xa29fd54a, 0x0cba57d0, 0xbdedac74, 0x1986ad46, 0x065ce41d, 0x112a213b, 0x92e80321, 0x998b5905, 0x9437205a, 0x866a2c2e, 0xf8b5fa83, 0x2f3eac15, 0xaa2244ac, 0x84f79256, 0xd5ce28f0, 0x1278b09e, 0x45fbab9c, 0x51a2df07, 0x49a35fe5, 0x95eaed40, 0x807d7a62, 0x2055f077, 0x7963d5fc, 0xb71ca5b2, 0x9bf9d4fc, 0xeb401e58, 0xe7d31adc, 0x3493bc6c, 0x4fd2d8a6, 0x9fb45846, 0xc7283af4, 0xa5c0ec7e, 0xffc77af6, 0x41a010f8, 0x4723dcf9, 0xa9c06388, 0xcc767c13, 0x5dc5ae3b, 0x1bcd74c0, 0x0190b139, 0x64360845, 0x2f3be4c8, 0xcf1d5fc4, 0x69953306, 0x49f0f63e, 0xaba74251, 0x8d9e103d };
 
+        public uint[] R
+        {
+            get => _r;
+            set => _r = value;
+        }
+
+        public uint[] R2
+        {
+            get => _r2;
+            set => _r2 = value;
+        }
+
+        public uint[] N
+        {
+            get => _n;
+            set => _n = value;
+        }
+
+        public uint[] NPrime
+        {
+            get => _nPrime;
+            set => _nPrime = value;
+        }
+
         public uint[] ModPow(uint[] value, int exponent)
         {
             var e = exponent;
