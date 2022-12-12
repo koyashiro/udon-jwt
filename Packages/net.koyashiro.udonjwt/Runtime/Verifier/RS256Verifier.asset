@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: RS256Verifier
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 93fd62f99bbfdbf4691689a30174b80e,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 78b394f16c17f6446b6e0252457c09f3,
     type: 2}
   udonAssembly: 
   assemblyError: 

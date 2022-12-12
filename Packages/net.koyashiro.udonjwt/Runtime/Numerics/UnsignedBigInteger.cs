@@ -35,26 +35,29 @@ namespace Koyashiro.UdonJwt.Numerics
             var leftLength = left.Length;
             var rightLength = right.Length;
 
-            var sum = new uint[leftLength + 1];
+            var leftLong = GetConvertedArrayUintToUlong(left);
+            var rightLong = GetConvertedArrayUintToUlong(right);
+
+            var sum = new ulong[leftLength + 1];
 
             var carry = 0UL;
             for (var i = 0; i < rightLength; i++)
             {
-                var s = (ulong)left[i] + (ulong)right[i] + carry;
-                sum[i] = (uint)(s << 32 >> 32);
+                var s = leftLong[i] + rightLong[i] + carry;
+                sum[i] = s & 0xffffffff;
                 carry = s >> 32;
             }
 
             for (var i = rightLength; i < leftLength; i++)
             {
-                var s = (ulong)left[i] + carry;
-                sum[i] = (uint)(s << 32 >> 32);
+                var s = leftLong[i] + carry;
+                sum[i] = s & 0xffffffff;
                 carry = s >> 32;
             }
 
-            sum[leftLength] = (uint)carry;
-
-            return sum;
+            sum[leftLength] = carry;
+            var result = GetConvertedArrayUlongToUint(sum);
+            return result;
         }
 
         public static uint[] Subtract(uint[] left, uint[] right)
@@ -62,50 +65,85 @@ namespace Koyashiro.UdonJwt.Numerics
             var leftLength = left.Length;
             var rightLength = right.Length;
 
-            var difference = new uint[left.Length];
+            var leftLong = GetConvertedArrayUintToUlong(left);
+            var rightLong = GetConvertedArrayUintToUlong(right);
+
+            var difference = new ulong[leftLength];
 
             var carry = 1UL;
             for (var i = 0; i < rightLength; i++)
             {
-                var s = (ulong)left[i] + (ulong)(~right[i]) + carry;
-                difference[i] = (uint)(s << 32 >> 32);
+                var s = leftLong[i] + (ulong)(~(uint)rightLong[i]) + carry;
+                difference[i] = s & 0xffffffff;
                 carry = s >> 32;
             }
 
-            for (var i = rightLength; i < left.Length; i++)
+            for (var i = rightLength; i < leftLength; i++)
             {
-                var s = (ulong)left[i] + (ulong)(~0U) + carry;
-                difference[i] = (uint)(s << 32 >> 32);
+                var s = leftLong[i] + (ulong)(~0U) + carry;
+                difference[i] = s & 0xffffffff;
                 carry = s >> 32;
             }
 
-            return difference;
+            var result = GetConvertedArrayUlongToUint(difference);
+            return result;
         }
 
         public static uint[] Multiply(uint[] left, uint[] right)
         {
-            var buf = new uint[left.Length + right.Length];
-            for (var i = 0; i < right.Length; i++)
+            var leftLength = left.Length;
+            var rightLength = right.Length;
+
+            var leftLong = GetConvertedArrayUintToUlong(left);
+            var rightLong = GetConvertedArrayUintToUlong(right);
+            var partialProd = new ulong[leftLength + 1];
+            var buf = new ulong[leftLength + rightLength];
+
+            var partialProdLength = partialProd.Length;
+
+            for (var i = 0; i < rightLength; i++)
             {
-                var partialProd = new uint[left.Length + 1];
                 var carry = 0UL;
-                for (var j = 0; j < left.Length; j++)
+                for (var j = 0; j < leftLength; j++)
                 {
-                    var p = (ulong)left[j] * (ulong)right[i] + carry;
-                    partialProd[j] = (uint)(p << 32 >> 32);
+                    var p = leftLong[j] * rightLong[i] + carry;
+                    partialProd[j] = p & 0xffffffff;
                     carry = p >> 32;
                 }
-                partialProd[left.Length] = (uint)carry;
+                partialProd[leftLength] = carry;
 
                 carry = 0UL;
-                for (var j = 0; j < partialProd.Length; j++)
+                for (var j = 0; j < partialProdLength; j++)
                 {
-                    var s = (ulong)buf[i + j] + (ulong)partialProd[j] + carry;
-                    buf[i + j] = (uint)(s << 32 >> 32);
+                    var s = buf[i + j] + partialProd[j] + carry;
+                    buf[i + j] = s & 0xffffffff;
                     carry = s >> 32;
                 }
             }
-            return buf;
+            var result = GetConvertedArrayUlongToUint(buf);
+            return result;
+        }
+
+        static ulong[] GetConvertedArrayUintToUlong(uint[] src)
+        {
+            var srcLength = src.Length;
+            var ulongArray = new ulong[srcLength];
+            for (int i = 0; i < srcLength; i++)
+            {
+                ulongArray[i] = (ulong)src[i];
+            }
+            return ulongArray;
+        }
+
+        static uint[] GetConvertedArrayUlongToUint(ulong[] src)
+        {
+            var srcLength = src.Length;
+            var uintArray = new uint[srcLength];
+            for (int i = 0; i < srcLength; i++)
+            {
+                uintArray[i] = (uint)(src[i] & 0xffffffff);
+            }
+            return uintArray;
         }
 
         public static bool Equals(uint[] left, uint[] right)

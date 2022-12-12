@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: MontgomeryModPowCalculatorCallbackTest
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 0c8d32c7d31a5e44b9dbbc4f1fe673b2,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 7aad5d83f720e9747b5a3842c46366a5,
     type: 2}
   udonAssembly: 
   assemblyError: 
