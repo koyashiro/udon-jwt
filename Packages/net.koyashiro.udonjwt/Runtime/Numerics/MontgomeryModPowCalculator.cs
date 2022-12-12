@@ -64,6 +64,7 @@ namespace Koyashiro.UdonJwt.Numerics
         {
             _e = exponent;
             _totalStep = 1;
+
             for (var e = exponent; e > 0; e >>= 1)
             {
                 _totalStep += 1;
@@ -71,6 +72,7 @@ namespace Koyashiro.UdonJwt.Numerics
             _base = MontgomeryReduction(UnsignedBigInteger.Multiply(value, _r2));
             _buf = MontgomeryReduction(_r2);
             _callback = callback;
+            _callback.Progress = 0;
 
             SendCustomEventDelayedFrames(nameof(_Loop), 0);
         }
