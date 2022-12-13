@@ -6,54 +6,58 @@ namespace Koyashiro.UdonJwt.Numerics
 {
     public class MontgomeryModPowCalculator : UdonSharpBehaviour
     {
+        [SerializeField]
+        private uint[] _r;
+
+        [SerializeField]
+        private uint[] _r2;
+
+        [SerializeField]
+        private uint[] _n;
+
+        [SerializeField]
+        private uint[] _nPrime;
+
+        private int _e;
+
+        private int _totalStep;
+
+        private uint[] _base;
+
+        private uint[] _buf;
+
+        private MontgomeryModPowCalculatorCallback _callback;
+
         /// <summary>
         /// R
         /// </summary>
-        [SerializeField]
-        public uint[] _r;
-
-        /// <summary>
-        /// R2
-        /// </summary>
-        [SerializeField]
-        public uint[] _r2;
-
-        /// <summary>
-        /// N
-        /// </summary>
-        [SerializeField]
-        public uint[] _n;
-
-        /// <summary>
-        /// N'
-        /// </summary>
-        [SerializeField]
-        public uint[] _nPrime;
-
-        private int _e;
-        private int _totalStep;
-        private uint[] _base;
-        private uint[] _buf;
-        private MontgomeryModPowCalculatorCallback _callback;
-
         public uint[] R
         {
             get => _r;
             set => _r = value;
         }
 
+        /// <summary>
+        /// R2
+        /// </summary>
         public uint[] R2
         {
             get => _r2;
             set => _r2 = value;
         }
 
+        /// <summary>
+        /// N
+        /// </summary>
         public uint[] N
         {
             get => _n;
             set => _n = value;
         }
 
+        /// <summary>
+        /// N'
+        /// </summary>
         public uint[] NPrime
         {
             get => _nPrime;
