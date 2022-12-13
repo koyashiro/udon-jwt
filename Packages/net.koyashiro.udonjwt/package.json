@@ -22,6 +22,6 @@
   "vpmDependencies": {
     "com.vrchat.udonsharp": "1.1.6",
     "net.koyashiro.udonencoding": "0.3.0",
-    "net.koyashiro.udonjson": "0.9.0"
+    "net.koyashiro.udonjson": "0.9.1"
   }
 }
