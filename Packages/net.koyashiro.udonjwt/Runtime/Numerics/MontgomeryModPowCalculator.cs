@@ -110,8 +110,11 @@ namespace Koyashiro.UdonJwt.Numerics
         {
             var baseLength = _n.Length;
 
+            var tLow = new uint[baseLength];
+            Array.Copy(t, tLow, baseLength);
+
             // T * N'
-            var a = UnsignedBigInteger.Multiply(t, _nPrime);
+            var a = UnsignedBigInteger.Multiply(tLow, _nPrime);
 
             // (T * N') mod R
             var b = new uint[baseLength];
