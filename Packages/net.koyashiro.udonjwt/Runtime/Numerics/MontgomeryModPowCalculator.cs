@@ -18,6 +18,8 @@ namespace Koyashiro.UdonJwt.Numerics
         [SerializeField]
         private uint[] _nPrime;
 
+        private bool _isRunning;
+
         private int _e;
 
         private int _totalStep;
@@ -64,8 +66,16 @@ namespace Koyashiro.UdonJwt.Numerics
             set => _nPrime = value;
         }
 
+        public bool IsRunning => _isRunning;
+
         public void ModPow(uint[] value, int exponent, MontgomeryModPowCalculatorCallback callback)
         {
+            if (_isRunning)
+            {
+                return;
+            }
+
+            _isRunning = true;
             _e = exponent;
             _totalStep = 1;
 
@@ -104,6 +114,7 @@ namespace Koyashiro.UdonJwt.Numerics
 
         public void _End()
         {
+            _isRunning = false;
             _callback.Result = MontgomeryReduction(_buf);
             _callback.Progress = 1;
             _callback.SendCustomEventDelayedFrames(nameof(_callback.OnProgress), 0);
