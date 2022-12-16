@@ -4,11 +4,12 @@ namespace Koyashiro.UdonJwt.SHA2
 {
     public static class SHA256
     {
-        private const int MESSAGE_BLOCK_SIZE = 64;
+        private const int MESSAGE_BLOCK_LENGTH = 64;
+        private const int DIGEST_LENGTH = 32;
 
         public static byte[] ComputeHash(byte[] buffer)
         {
-            uint[] K = new uint[MESSAGE_BLOCK_SIZE] {
+            uint[] K = new uint[MESSAGE_BLOCK_LENGTH] {
                 0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
                 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
                 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
@@ -26,12 +27,12 @@ namespace Koyashiro.UdonJwt.SHA2
 
             foreach (var mi in m)
             {
-                var w = new uint[MESSAGE_BLOCK_SIZE];
+                var w = new uint[MESSAGE_BLOCK_LENGTH];
                 for (var i = 0; i < 16; i++)
                 {
                     w[i] = ((uint)mi[4 * i] << 24) | ((uint)mi[4 * i + 1] << 16) | ((uint)mi[4 * i + 2] << 8) | ((uint)mi[4 * i + 3]);
                 }
-                for (var i = 16; i < MESSAGE_BLOCK_SIZE; i++)
+                for (var i = 16; i < MESSAGE_BLOCK_LENGTH; i++)
                 {
                     w[i] = SmallSigma1(w[i - 2]) + w[i - 7] + SmallSigma0(w[i - 15]) + w[i - 16];
                 }
@@ -45,7 +46,7 @@ namespace Koyashiro.UdonJwt.SHA2
                 var g = hBuf[6];
                 var h = hBuf[7];
 
-                for (var i = 0; i < MESSAGE_BLOCK_SIZE; i++)
+                for (var i = 0; i < MESSAGE_BLOCK_LENGTH; i++)
                 {
                     var t1 = h + LargeSigma1(e) + Ch(e, f, g) + K[i] + w[i];
                     var t2 = LargeSigma0(a) + Maj(a, b, c);
@@ -69,7 +70,6 @@ namespace Koyashiro.UdonJwt.SHA2
                 hBuf[7] = h + hBuf[7];
             }
 
-            var DIGEST_LENGTH = 32;
             var digest = new byte[DIGEST_LENGTH];
             for (var i = 0; i < DIGEST_LENGTH / 4; i++)
             {
@@ -84,7 +84,7 @@ namespace Koyashiro.UdonJwt.SHA2
         private static byte[] Pad(byte[] input)
         {
             var inputLength = input.LongLength;
-            var bufferLength = (((inputLength + 8L) / MESSAGE_BLOCK_SIZE) + 1L) * MESSAGE_BLOCK_SIZE;
+            var bufferLength = (((inputLength + 8L) / MESSAGE_BLOCK_LENGTH) + 1L) * MESSAGE_BLOCK_LENGTH;
 
             var buffer = new byte[bufferLength];
             Array.Copy(input, buffer, inputLength);
@@ -106,12 +106,12 @@ namespace Koyashiro.UdonJwt.SHA2
         private static byte[][] Divide(byte[] input)
         {
             var inputLength = input.LongLength;
-            var mLength = inputLength / MESSAGE_BLOCK_SIZE;
+            var mLength = inputLength / MESSAGE_BLOCK_LENGTH;
             var m = new byte[mLength][];
             for (var i = 0; i < mLength; i++)
             {
-                var mi = new byte[MESSAGE_BLOCK_SIZE];
-                Array.Copy(input, i * MESSAGE_BLOCK_SIZE, mi, 0, MESSAGE_BLOCK_SIZE);
+                var mi = new byte[MESSAGE_BLOCK_LENGTH];
+                Array.Copy(input, i * MESSAGE_BLOCK_LENGTH, mi, 0, MESSAGE_BLOCK_LENGTH);
                 m[i] = mi;
             }
             return m;
