@@ -4,10 +4,11 @@ using UdonSharp;
 using Koyashiro.UdonJson;
 using Koyashiro.UdonEncoding;
 using Koyashiro.UdonJwt.Verifier;
+using Koyashiro.UdonJwt.Numerics;
 
 namespace Koyashiro.UdonJwt
 {
-    public class JwtDecoder : UdonSharpBehaviour
+    public class JwtDecoder : RS256VerifierCallback
     {
         [SerializeField]
         private JwtAlgorithmKind _algorithmKind;
@@ -23,17 +24,19 @@ namespace Koyashiro.UdonJwt
         private int _e;
 
         [SerializeField, HideInInspector]
+        private uint[] _r;
+
+        [SerializeField, HideInInspector]
+        private uint[] _r2;
+
+        [SerializeField, HideInInspector]
         private uint[] _n;
 
         [SerializeField, HideInInspector]
-        private uint[] _nInverse;
-
-        [SerializeField, HideInInspector]
-        private int _fixedPointLength;
+        private uint[] _nPrime;
         #endregion
 
-        private UdonSharpBehaviour _callbackThis;
-        private string _callbackEventName;
+        private JwtDecorderCallback _jwtDecorderCallback;
         private bool _result;
         private UdonJsonValue _header;
         private UdonJsonValue _payload;
@@ -46,11 +49,14 @@ namespace Koyashiro.UdonJwt
 
         public int E => _e;
 
+        public uint[] R => _r;
+
+        public uint[] R2 => _r2;
+
         public uint[] N => _n;
 
-        public uint[] NInverse => _nInverse;
+        public uint[] NPrime => _nPrime;
 
-        public int FixedPointLength => _fixedPointLength;
 
         public bool Result => _result;
 
@@ -58,27 +64,29 @@ namespace Koyashiro.UdonJwt
 
         public UdonJsonValue Payload => _payload;
 
-        public void SetPublicKey(int e, uint[] n, uint[] nInverse, int fixedPointLength)
+        public void SetPublicKey(int e, uint[] r, uint[] r2, uint[] n, uint[] nPrime)
         {
             _e = e;
+            _r = r;
+            _r2 = r2;
             _n = n;
-            _nInverse = nInverse;
-            _fixedPointLength = fixedPointLength;
-            _rs256Verifier.SetPublicKey(e, n, nInverse, fixedPointLength);
+            _nPrime = nPrime;
+            _rs256Verifier.SetPublicKey(e, n);
         }
 
-        public void Decode(string token, UdonSharpBehaviour callbackThis, string callbackEventName)
+        public void Decode(string token, JwtDecorderCallback jwtDecorderCallback)
         {
+            _jwtDecorderCallback = jwtDecorderCallback;
             if (token == null)
             {
-                callbackThis.SendCustomEventDelayedFrames(callbackEventName, 1);
+                _jwtDecorderCallback.SendCustomEventDelayedFrames("", 1);
                 return;
             }
 
             var splitTokens = token.Split('.');
             if (splitTokens.Length != 3)
             {
-                callbackThis.SendCustomEventDelayedFrames(callbackEventName, 1);
+                _jwtDecorderCallback.SendCustomEventDelayedFrames("", 1);
                 return;
             }
 
@@ -88,13 +96,13 @@ namespace Koyashiro.UdonJwt
 
             if (!UdonJsonDeserializer.TryDeserialize(UdonUTF8.GetString(Convert.FromBase64String(headerBase64)), out var header))
             {
-                callbackThis.SendCustomEventDelayedFrames(callbackEventName, 1);
+                _jwtDecorderCallback.SendCustomEventDelayedFrames("", 1);
                 return;
             }
 
             if (header.GetKind() != UdonJsonValueKind.Object)
             {
-                callbackThis.SendCustomEventDelayedFrames(callbackEventName, 1);
+                _jwtDecorderCallback.SendCustomEventDelayedFrames("", 1);
                 return;
             }
 
@@ -102,7 +110,7 @@ namespace Koyashiro.UdonJwt
 
             if (!UdonJsonDeserializer.TryDeserialize(UdonUTF8.GetString(Convert.FromBase64String(payloadBase64)), out var payload))
             {
-                callbackThis.SendCustomEventDelayedFrames(callbackEventName, 1);
+                _jwtDecorderCallback.SendCustomEventDelayedFrames("", 1);
                 return;
             }
 
@@ -112,21 +120,35 @@ namespace Koyashiro.UdonJwt
 
             _header = header;
             _payload = payload;
-            _callbackThis = callbackThis;
-            _callbackEventName = callbackEventName;
+            _jwtDecorderCallback = jwtDecorderCallback;
 
             switch (_algorithmKind)
             {
                 case JwtAlgorithmKind.RS256:
-                    _rs256Verifier.Verify(headerBase64, payloadBase64, signature, this, nameof(_Decode));
+                    _rs256Verifier.Verify(headerBase64, payloadBase64, signature, _jwtDecorderCallback,this);
                     break;
             }
         }
 
-        public void _Decode()
+        public override void OnEnd()
         {
-            _result = _rs256Verifier.Result;
-            _callbackThis.SendCustomEventDelayedFrames(_callbackEventName, 1);
+            switch (RS256VerifierResult)
+            {
+                case RS256VerifierResult.OK:
+                    _jwtDecorderCallback.AuthenticationResult = JwtAuthenticationResult.OK;
+                    break;
+                case RS256VerifierResult.ERROR_DISACCORD_HASH:
+                    _jwtDecorderCallback.AuthenticationResult = JwtAuthenticationResult.ERROR_DISACCORD_HASH;
+                    break;
+                case RS256VerifierResult.ERROR_INCORRECT_DATA:
+                    _jwtDecorderCallback.AuthenticationResult = JwtAuthenticationResult.ERROR_INCORRECT_STRUCTURE;
+                    break;
+                case RS256VerifierResult.ERROR_OTHER:
+                    _jwtDecorderCallback.AuthenticationResult = JwtAuthenticationResult.ERROR_OTHER;
+                    break;
+            }
+            //Todo Check expire
+            _jwtDecorderCallback.OnEnd();
         }
 
         public static string ToBase64(string base64Url)
