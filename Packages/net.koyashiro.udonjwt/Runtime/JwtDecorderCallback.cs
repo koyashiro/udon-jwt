@@ -1,11 +1,13 @@
 using UdonSharp;
-public enum JwtAuthenticationResult
+using Koyashiro.UdonJson;
+public enum JwtDecodeErrorKind
 {
-    OK,
-    ERROR_INCORRECT_STRUCTURE,
-    ERROR_DISACCORD_HASH,
-    ERROR_TOKEN_EXPIRED,
-    ERROR_OTHER,
+    None,
+    Busy,
+    InvalidToken,
+    InvalidSignature,
+    ExpiredToken,
+    Other,
 }
 
 namespace Koyashiro.UdonJwt.Numerics
@@ -13,7 +15,12 @@ namespace Koyashiro.UdonJwt.Numerics
     public abstract class JwtDecorderCallback : UdonSharpBehaviour
     {
         public float Progress { get; set; }
-        public JwtAuthenticationResult Result { get; set; }
+        public bool Result { get; set; }
+
+        public UdonJsonValue Header { get; set; }
+        public UdonJsonValue Payload { get; set; }
+
+        public JwtDecodeErrorKind ErrorKind { get; set; }
         virtual public void OnProgress() { }
         abstract public void OnEnd();
     }
