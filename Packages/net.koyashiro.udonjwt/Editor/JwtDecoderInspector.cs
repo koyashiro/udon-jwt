@@ -6,37 +6,32 @@ using Koyashiro.UdonJwt.Numerics;
 
 namespace Koyashiro.UdonJwt.Editor
 {
-    [CustomEditor(typeof(JwtDecoder))]
+    [CustomEditor(typeof(JwtRS256Decoder))]
     public class JwtDecoderInspector : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
 
-            var jwtDecoder = target as JwtDecoder;
+            var jwtDecoder = target as JwtRS256Decoder;
 
             if (GUILayout.Button("Set Public Key"))
             {
-                // switch (jwtDecoder.AlgorithmKind)
-                // {
-                //     case JwtAlgorithmKind.RS256:
-                //         if (!PublicKeyDecoder.TryDecode(jwtDecoder.PublicKey, out var nBytes, out var e))
-                //         {
-                //             Debug.LogError("[UdonJwt] Failed to parse public key");
-                //             return;
-                //         }
+                if (!PublicKeyDecoder.TryDecode(jwtDecoder.PublicKey, out var nBytes, out var e))
+                {
+                    Debug.LogError("[UdonJwt] Failed to parse public key");
+                    return;
+                }
 
-                //         var n = UnsignedBigInteger.FromBytes(nBytes);
-                //         var nInverse = UnsignedBigInteger.Inverse(n, out var fixedPointLength);
-                //         var nResized = new uint[nInverse.Length];
-                //         Array.Copy(n, nResized, n.Length);
-                //         jwtDecoder.SetPublicKey(e, nResized, nInverse, fixedPointLength);
-                //         EditorUtility.SetDirty(jwtDecoder);
-                //         EditorUtility.SetDirty(jwtDecoder.RS256Verifier);
-                //         break;
-                // }
+                var n = UnsignedBigInteger.FromBytes(nBytes);
+
+                // TODO: get values from public key.
+                //jwtDecoder.SetPublicKey(e, r, r2, n, nPrime);
+
+                EditorUtility.SetDirty(jwtDecoder);
             }
 
+            /*
             if (jwtDecoder.E != 0 && jwtDecoder.N != null)
             {
                 EditorGUI.BeginDisabledGroup(true);
@@ -45,6 +40,7 @@ namespace Koyashiro.UdonJwt.Editor
                 EditorGUILayout.TextField(nameof(jwtDecoder.NInverse), UnsignedBigInteger.ToHexString(jwtDecoder.NInverse));
                 EditorGUI.EndDisabledGroup();
             }
+            */
         }
     }
 }
