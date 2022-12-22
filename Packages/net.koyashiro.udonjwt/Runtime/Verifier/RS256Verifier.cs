@@ -11,88 +11,44 @@ namespace Koyashiro.UdonJwt.Verifier
     {
         [SerializeField]
         private MontgomeryModPowCalculator _montgomeryModPowCalculator;
-
-        [SerializeField, HideInInspector]
-        private int _e;
-
-        [SerializeField, HideInInspector]
-        private uint[] _r;
-
-        [SerializeField, HideInInspector]
-        private uint[] _r2;
-
-        [SerializeField, HideInInspector]
-        private uint[] _n;
-
-        [SerializeField, HideInInspector]
-        private uint[] _nPrime;
-
+        private RS256VerifierCallback _rS256VerifierCallback;
         private string _headerBase64;
         private string _payloadBase64;
-        private RS256VerifierCallback _rS256VerifierCallback;
 
-        private bool _result;
-
-        public void SetPublicKey(int e, uint[] r, uint[] r2, uint[] n, uint[] nPrime)
+        public void Initialize(int e, uint[] r, uint[] r2, uint[] n, uint[] nPrime)
         {
-            _e = e;
-            _r = r;
-            _r2 = r2;
-            _n = n;
-            _nPrime = nPrime;
+            _montgomeryModPowCalculator.Initialize(e, r, r2, n, nPrime);
         }
 
-        public void Verify(string headerBase64, string payloadBase64, byte[] signature, JwtDecorderCallback jwtDecorderCallback,RS256VerifierCallback rS256VerifierCallback)
+        public void Verify(string headerBase64, string payloadBase64, byte[] signature, JwtDecorderCallback jwtDecorderCallback, RS256VerifierCallback rS256VerifierCallback)
         {
             _rS256VerifierCallback = rS256VerifierCallback;
-
-            var hashedToken = MakeHashedToken(headerBase64, payloadBase64);
-            var uintSigneture = UnsignedBigInteger.FromBytes(signature);
-
-            _montgomeryModPowCalculator.ModPow(UnsignedBigInteger.FromBytes(signature), _e, jwtDecorderCallback, this);
-        }
-
-        private byte[] MakeHashedToken(string headerBase64, string payloadBase64 )
-        {
-            var tokenBytes = UdonUTF8.GetBytes(headerBase64 + "." + payloadBase64);
-            return SHA256.ComputeHash(tokenBytes);
+            _headerBase64 = headerBase64;
+            _payloadBase64 = payloadBase64;
+            _montgomeryModPowCalculator.ModPow(UnsignedBigInteger.FromBytes(signature), jwtDecorderCallback, this);
         }
 
         public override void OnEnd()
         {
-            // var result = UnsignedBigInteger.ToBytes(_modPowCalculator.Result);
+            //get hash from header and payload
+            var tokenBytes = UdonUTF8.GetBytes(_headerBase64 + "." + _payloadBase64);
+            var hashedTokenBytes = SHA256.ComputeHash(tokenBytes);
 
-            // var hash = new byte[] {
-            //     0x00, 0x01, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-            //     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-            //     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-            //     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-            //     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-            //     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-            //     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-            //     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-            //     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-            //     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-            //     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-            //     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-            //     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x30, 0x31, 0x30,
-            //     0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20,
-            //     0x1a, 0xb1, 0xa2, 0xbb, 0x85, 0x02, 0x82, 0x0a, 0x83, 0x88, 0x1a, 0x5b, 0x66, 0x91, 0x0b, 0x81,
-            //     0x91, 0x21, 0xba, 0xfe, 0x33, 0x6d, 0x76, 0x37, 0x46, 0x37, 0xaa, 0x4e, 0xa7, 0xba, 0x26, 0x16
-            // };
+            //TODO: Get hash from ModPow result.
+            var modPowResultBytes = UnsignedBigInteger.ToBytes(Result);
 
-            // for (var i = 0; i < hash.Length; i++)
-            // {
-            //     if (hash[i] != result[i])
-            //     {
-            //         _result = false;
-            //         _callbackThis.SendCustomEventDelayedFrames(_callbackEventName, 1);
-            //         return;
-            //     }
-            // }
+            for (var i = 0; i < hashedTokenBytes.Length; i++)
+            {
+                if (modPowResultBytes[i] != hashedTokenBytes[i])
+                {
+                    _rS256VerifierCallback.RS256VerifierResult = RS256VerifierResult.ERROR_DISACCORD_HASH;
+                    _rS256VerifierCallback.OnEnd();
+                    return;
+                }
+            }
 
-            // _result = true;
-            // _callbackThis.SendCustomEventDelayedFrames(_callbackEventName, 1);
+            _rS256VerifierCallback.RS256VerifierResult = RS256VerifierResult.OK;
+            _rS256VerifierCallback.OnEnd();
         }
     }
 }

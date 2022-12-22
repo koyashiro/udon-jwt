@@ -11,7 +11,7 @@ namespace Koyashiro.UdonJwt
     public class JwtDecoder : RS256VerifierCallback
     {
         [SerializeField]
-        private JwtAlgorithmKind _algorithmKind;
+        private JwtAlgorithmKind _algorithmKind = JwtAlgorithmKind.RS256;
 
         #region RS256
         [SerializeField]
@@ -37,9 +37,6 @@ namespace Koyashiro.UdonJwt
         #endregion
 
         private JwtDecorderCallback _jwtDecorderCallback;
-        private bool _result;
-        private UdonJsonValue _header;
-        private UdonJsonValue _payload;
 
         public JwtAlgorithmKind AlgorithmKind => _algorithmKind;
 
@@ -47,22 +44,7 @@ namespace Koyashiro.UdonJwt
 
         public string PublicKey => _publicKey;
 
-        public int E => _e;
-
-        public uint[] R => _r;
-
-        public uint[] R2 => _r2;
-
-        public uint[] N => _n;
-
-        public uint[] NPrime => _nPrime;
-
-
-        public bool Result => _result;
-
-        public UdonJsonValue Header => _header;
-
-        public UdonJsonValue Payload => _payload;
+        private ulong _expiration;
 
         public void SetPublicKey(int e, uint[] r, uint[] r2, uint[] n, uint[] nPrime)
         {
@@ -71,7 +53,11 @@ namespace Koyashiro.UdonJwt
             _r2 = r2;
             _n = n;
             _nPrime = nPrime;
-            _rs256Verifier.SetPublicKey(e, n);
+        }
+
+        public void Initialize()
+        {
+            _rs256Verifier.Initialize(_e, _r, _r2, _n, _nPrime);
         }
 
         public void Decode(string token, JwtDecorderCallback jwtDecorderCallback)
@@ -107,7 +93,6 @@ namespace Koyashiro.UdonJwt
             }
 
             // TODO: check header
-
             if (!UdonJsonDeserializer.TryDeserialize(UdonUTF8.GetString(Convert.FromBase64String(payloadBase64)), out var payload))
             {
                 _jwtDecorderCallback.SendCustomEventDelayedFrames("", 1);
@@ -115,17 +100,15 @@ namespace Koyashiro.UdonJwt
             }
 
             // TODO: check body
+            var expirationValue = payload.GetValue("exp"); //try get value?
+            var _expiration = expirationValue.GetKind() == UdonJsonValueKind.Number ? expirationValue.AsNumber() : ulong.MaxValue;
 
             var signature = Convert.FromBase64String(signatureBase64);
-
-            _header = header;
-            _payload = payload;
-            _jwtDecorderCallback = jwtDecorderCallback;
 
             switch (_algorithmKind)
             {
                 case JwtAlgorithmKind.RS256:
-                    _rs256Verifier.Verify(headerBase64, payloadBase64, signature, _jwtDecorderCallback,this);
+                    _rs256Verifier.Verify(headerBase64, payloadBase64, signature, _jwtDecorderCallback, this);
                     break;
             }
         }
@@ -135,19 +118,20 @@ namespace Koyashiro.UdonJwt
             switch (RS256VerifierResult)
             {
                 case RS256VerifierResult.OK:
-                    _jwtDecorderCallback.AuthenticationResult = JwtAuthenticationResult.OK;
+                    _jwtDecorderCallback.Result = JwtAuthenticationResult.OK;
                     break;
                 case RS256VerifierResult.ERROR_DISACCORD_HASH:
-                    _jwtDecorderCallback.AuthenticationResult = JwtAuthenticationResult.ERROR_DISACCORD_HASH;
+                    _jwtDecorderCallback.Result = JwtAuthenticationResult.ERROR_DISACCORD_HASH;
                     break;
                 case RS256VerifierResult.ERROR_INCORRECT_DATA:
-                    _jwtDecorderCallback.AuthenticationResult = JwtAuthenticationResult.ERROR_INCORRECT_STRUCTURE;
+                    _jwtDecorderCallback.Result = JwtAuthenticationResult.ERROR_INCORRECT_STRUCTURE;
                     break;
                 case RS256VerifierResult.ERROR_OTHER:
-                    _jwtDecorderCallback.AuthenticationResult = JwtAuthenticationResult.ERROR_OTHER;
+                    _jwtDecorderCallback.Result = JwtAuthenticationResult.ERROR_OTHER;
                     break;
             }
-            //Todo Check expire
+            //TODO: Check expire
+            //_expiration
             _jwtDecorderCallback.OnEnd();
         }
 

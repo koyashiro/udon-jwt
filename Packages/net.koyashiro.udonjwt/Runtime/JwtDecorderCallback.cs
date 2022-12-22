@@ -12,8 +12,8 @@ namespace Koyashiro.UdonJwt.Numerics
 {
     public abstract class JwtDecorderCallback : UdonSharpBehaviour
     {
-        public float AuthenticationProgress { get; set; }
-        public JwtAuthenticationResult AuthenticationResult { get; set; }
+        public float Progress { get; set; }
+        public JwtAuthenticationResult Result { get; set; }
         virtual public void OnProgress() { }
         abstract public void OnEnd();
     }

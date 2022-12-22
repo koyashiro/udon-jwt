@@ -17,23 +17,27 @@ namespace Koyashiro.UdonJwt.Editor
 
             if (GUILayout.Button("Set Public Key"))
             {
-                 switch (jwtDecoder.AlgorithmKind)
-                 {
-                     case JwtAlgorithmKind.RS256:
-                         if (!PublicKeyDecoder.TryDecode(jwtDecoder.PublicKey, out var nBytes, out var e))
-                         {
-                             Debug.LogError("[UdonJwt] Failed to parse public key");
-                             return;
-                         }
+                switch (jwtDecoder.AlgorithmKind)
+                {
+                    case JwtAlgorithmKind.RS256:
+                        if (!PublicKeyDecoder.TryDecode(jwtDecoder.PublicKey, out var nBytes, out var e))
+                        {
+                            Debug.LogError("[UdonJwt] Failed to parse public key");
+                            return;
+                        }
 
-                         var n = UnsignedBigInteger.FromBytes(nBytes);
-                         jwtDecoder.SetPublicKey(e, n);
-                         EditorUtility.SetDirty(jwtDecoder);
-                         EditorUtility.SetDirty(jwtDecoder.RS256Verifier);
-                         break;
-                 }
+                        var n = UnsignedBigInteger.FromBytes(nBytes);
+
+                        // TODO: get values from public key.
+                        //jwtDecoder.SetPublicKey(e, r, r2, n, nPrime);
+
+                        EditorUtility.SetDirty(jwtDecoder);
+                        EditorUtility.SetDirty(jwtDecoder.RS256Verifier);
+                        break;
+                }
             }
 
+            /*
             if (jwtDecoder.E != 0 && jwtDecoder.N != null)
             {
                 EditorGUI.BeginDisabledGroup(true);
@@ -42,6 +46,7 @@ namespace Koyashiro.UdonJwt.Editor
                 EditorGUILayout.TextField(nameof(jwtDecoder.NInverse), UnsignedBigInteger.ToHexString(jwtDecoder.NInverse));
                 EditorGUI.EndDisabledGroup();
             }
+            */
         }
     }
 }
