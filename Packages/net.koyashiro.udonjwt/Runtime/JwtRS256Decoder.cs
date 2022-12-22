@@ -37,8 +37,7 @@ namespace Koyashiro.UdonJwt
         private UdonJsonValue _headerJson;
         private UdonJsonValue _payloadJson;
 
-        private byte[] _headerBytes;
-        private byte[] _payloadBytes;
+        private string _tokenHashSource;
 
         private uint _totalStep;
 
@@ -76,13 +75,15 @@ namespace Koyashiro.UdonJwt
                 return;
             }
                         
-            var headerBase64Url = splitTokens[0];
-            var payloadBase64Url = splitTokens[1];
-            var signatureBase64Url = splitTokens[2];
+            var header = splitTokens[0];
+            var payload = splitTokens[1];
+            var signature = splitTokens[2];
 
-            var headerBase64 = ToBase64(headerBase64Url);
-            var payloadBase64 = ToBase64(payloadBase64Url);
-            var signatureBase64 = ToBase64(signatureBase64Url);
+            _tokenHashSource = token.Substring(0, header.Length + 1 + payload.Length);
+
+            var headerBase64 = ToBase64(header);
+            var payloadBase64 = ToBase64(payload);
+            var signatureBase64 = ToBase64(signature);
 
             // TODO: make bytes from Base64Url
             //_headerBytes = ;
@@ -202,11 +203,7 @@ namespace Koyashiro.UdonJwt
         public void _VerifyHash()
         {
             //get hash from header and payload
-            var tokenBytes = new byte[_headerBytes.Length + _payloadBytes.Length +1];
-            Array.Copy(_headerBytes, tokenBytes, _headerBytes.Length);
-            tokenBytes[_headerBytes.Length] = (byte)'.';
-            Array.Copy(_payloadBytes,0, tokenBytes, _headerBytes.Length + 1, _payloadBytes.Length);
-
+            var tokenBytes = UdonUTF8.GetBytes(_tokenHashSource);
             var hashedTokenBytes = SHA256.ComputeHash(tokenBytes);
 
             //TODO: Get hash from ModPow result.
