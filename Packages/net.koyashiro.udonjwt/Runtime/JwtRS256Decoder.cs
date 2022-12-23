@@ -14,6 +14,8 @@ namespace Koyashiro.UdonJwt
         [SerializeField, TextArea(10, 20)]
         private string _publicKey;
         public string PublicKey => _publicKey;
+        public bool Busy => _busy;
+        private bool _busy;
 
         [SerializeField, HideInInspector]
         private int _e;
@@ -32,13 +34,10 @@ namespace Koyashiro.UdonJwt
 
         private JwtDecorderCallback _callback;
 
-        private bool _isRunning;
-
         private UdonJsonValue _headerJson;
         private UdonJsonValue _payloadJson;
 
         private string _tokenHashSource;
-
         private uint _totalStep;
 
         public void SetPublicKey(int e, uint[] r, uint[] r2, uint[] n, uint[] nPrime)
@@ -52,12 +51,12 @@ namespace Koyashiro.UdonJwt
 
         public void Decode(string token, JwtDecorderCallback callback)
         {
-            if (_isRunning)
+            if (_busy)
             {
                 DecodeError(JwtDecodeErrorKind.Busy);
                 return;
             }
-            _isRunning = true;
+            _busy = true;
 
             _callback = callback;
             _callback.Progress = 0;
@@ -74,43 +73,51 @@ namespace Koyashiro.UdonJwt
                 DecodeError(JwtDecodeErrorKind.InvalidToken);
                 return;
             }
-                        
+
+            //get data
             var header = splitTokens[0];
             var payload = splitTokens[1];
             var signature = splitTokens[2];
-
             _tokenHashSource = token.Substring(0, header.Length + 1 + payload.Length);
 
-            var headerBase64 = ToBase64(header);
-            var payloadBase64 = ToBase64(payload);
-            var signatureBase64 = ToBase64(signature);
-
-            // TODO: make bytes from Base64Url
-            //_headerBytes = ;
-            //_payloadBytes = ;
-
-            if (!UdonJsonDeserializer.TryDeserialize(UdonUTF8.GetString(Convert.FromBase64String(headerBase64)), out _headerJson))
+            if (!GetCheckedHeaderJson(ToBase64(header), out _headerJson))
             {
                 DecodeError(JwtDecodeErrorKind.InvalidToken);
                 return;
             }
 
-            if (_headerJson.GetKind() != UdonJsonValueKind.Object)
+            if (!GetCheckedPayloadJson(ToBase64(payload), out _payloadJson))
             {
                 DecodeError(JwtDecodeErrorKind.InvalidToken);
                 return;
             }
 
-            // TODO: check header
-            if (!UdonJsonDeserializer.TryDeserialize(UdonUTF8.GetString(Convert.FromBase64String(payloadBase64)), out _payloadJson))
-            {
-                DecodeError(JwtDecodeErrorKind.InvalidToken);
-                return;
-            }
-
-            // TODO: check body
-            var signatureBytes = Convert.FromBase64String(signatureBase64);
+            var signatureBytes = Convert.FromBase64String(ToBase64(signature));
             ModPow(UnsignedBigInteger.FromBytes(signatureBytes));
+        }
+
+        private bool GetCheckedHeaderJson(string headerBase64,out UdonJsonValue json)
+        {
+            var headerBytes = UdonUTF8.GetString(Convert.FromBase64String(headerBase64));
+            if (!UdonJsonDeserializer.TryDeserialize(headerBytes, out json)) return false;
+            if (json.GetKind() != UdonJsonValueKind.Object) return false;
+
+            //check algorithm
+            // TODO: TryGetValue for UdonJson
+            var expirationValue = _payloadJson.GetValue("alg");
+            if (expirationValue == null) return false;
+            if (expirationValue.GetKind() != UdonJsonValueKind.String) return false;
+            var algorithm = expirationValue.AsString();
+            if (algorithm != "RS256") return false; //not RS256 algorithm
+            return true; // check OK
+        }
+
+        private bool GetCheckedPayloadJson(string payloadBase64, out UdonJsonValue json)
+        {
+            var payloadBytes = UdonUTF8.GetString(Convert.FromBase64String(payloadBase64));
+            if (!UdonJsonDeserializer.TryDeserialize(payloadBytes, out json)) return false;
+            if (json.GetKind() != UdonJsonValueKind.Object) return false;
+            return true; // check OK
         }
 
         #region Montgomery
@@ -240,12 +247,13 @@ namespace Koyashiro.UdonJwt
 
             //JWT decode is success
             _callback.Result = true;
+            _callback.ErrorKind = JwtDecodeErrorKind.None;
             _callback.Header = _headerJson;
             _callback.Payload = _payloadJson;
             _callback.Progress = 1;
             _callback.OnProgress();
             _callback.OnEnd();
-            _isRunning = false;
+            _busy = false;
         }
 
         private long GetNowUnixTime()
@@ -264,10 +272,10 @@ namespace Koyashiro.UdonJwt
             _callback.Progress = 1;
             _callback.OnProgress();
             _callback.OnEnd();
-            _isRunning = false;
+            _busy = false;
         }
 
-        public static string ToBase64(string base64Url)
+        private static string ToBase64(string base64Url)
         {
             var base64 = base64Url.Replace('-', '+').Replace('_', '/');
             switch (base64.Length % 4)
