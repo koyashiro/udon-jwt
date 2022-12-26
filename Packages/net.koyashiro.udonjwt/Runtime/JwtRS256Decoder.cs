@@ -96,7 +96,7 @@ namespace Koyashiro.UdonJwt
             ModPow(UnsignedBigInteger.FromBytes(signatureBytes));
         }
 
-        private bool GetCheckedHeaderJson(string headerBase64,out UdonJsonValue json)
+        private bool GetCheckedHeaderJson(string headerBase64, out UdonJsonValue json)
         {
             var headerBytes = UdonUTF8.GetString(Convert.FromBase64String(headerBase64));
             if (!UdonJsonDeserializer.TryDeserialize(headerBytes, out json)) return false;
@@ -236,7 +236,7 @@ namespace Koyashiro.UdonJwt
                     DecodeError(JwtDecodeErrorKind.InvalidToken);
                     return;
                 }
-                var expiration =  (long)expirationValue.AsNumber();
+                var expiration = (long)expirationValue.AsNumber();
                 var nowUnixTime = GetNowUnixTime();
                 if (expiration < nowUnixTime)
                 {
