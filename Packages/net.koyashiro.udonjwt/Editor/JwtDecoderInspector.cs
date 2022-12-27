@@ -1,5 +1,5 @@
 #if UNITY_EDITOR
-using System;
+using System.Numerics;
 using UnityEngine;
 using UnityEditor;
 using Koyashiro.UdonJwt.Numerics;
@@ -17,30 +17,49 @@ namespace Koyashiro.UdonJwt.Editor
 
             if (GUILayout.Button("Set Public Key"))
             {
-                if (!PublicKeyDecoder.TryDecode(jwtDecoder.PublicKey, out var nBytes, out var e))
+                if (!PublicKeyDecoder.TryDecode(jwtDecoder.PublicKey, out var n, out var e))
                 {
                     Debug.LogError("[UdonJwt] Failed to parse public key");
                     return;
                 }
 
-                var n = UnsignedBigInteger.FromBytes(nBytes);
+                // 2 ^ 4096
+                var r = BigInteger.Parse("2");
+                r <<= 4096;
 
-                // TODO: get values from public key.
-                //jwtDecoder.SetPublicKey(e, r, r2, n, nPrime);
+                var r2 = BigInteger.ModPow(r, 2, n);
+                var nPrime = CalculateNPrime(n, r);
+
+                jwtDecoder.SetPublicKey(
+                    e,
+                    UnsignedBigInteger.FromBytesLE(r2.ToByteArray()),
+                    UnsignedBigInteger.FromBytesLE(n.ToByteArray()),
+                    UnsignedBigInteger.FromBytesLE(nPrime.ToByteArray())
+                );
 
                 EditorUtility.SetDirty(jwtDecoder);
             }
+        }
 
-            /*
-            if (jwtDecoder.E != 0 && jwtDecoder.N != null)
+        private static BigInteger CalculateNPrime(BigInteger n, BigInteger r)
+        {
+            var nPrime = BigInteger.Parse("0");
+            var t = BigInteger.Zero;
+            var i = 1;
+
+            while (r > 1)
             {
-                EditorGUI.BeginDisabledGroup(true);
-                EditorGUILayout.TextField(nameof(jwtDecoder.E), $"0x{jwtDecoder.E:x8}");
-                EditorGUILayout.TextField(nameof(jwtDecoder.N), UnsignedBigInteger.ToHexString(jwtDecoder.N));
-                EditorGUILayout.TextField(nameof(jwtDecoder.NInverse), UnsignedBigInteger.ToHexString(jwtDecoder.NInverse));
-                EditorGUI.EndDisabledGroup();
+                if (!((t % 2) == 0))
+                {
+                    t += n;
+                    nPrime += i;
+                }
+                t /= 2;
+                r /= 2;
+                i *= 2;
             }
-            */
+
+            return nPrime;
         }
     }
 }

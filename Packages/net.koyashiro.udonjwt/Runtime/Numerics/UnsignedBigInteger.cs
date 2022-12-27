@@ -1,8 +1,11 @@
+using System;
+using System.Linq;
+
 namespace Koyashiro.UdonJwt.Numerics
 {
     public static class UnsignedBigInteger
     {
-        public static uint[] FromBytes(byte[] input)
+        public static uint[] FromBytesBE(byte[] input)
         {
             var result = new uint[input.Length / 4];
             for (var i = 0; i < result.Length; i++)
@@ -14,6 +17,13 @@ namespace Koyashiro.UdonJwt.Numerics
                 result[result.Length - 1 - i] = a | b | c | d;
             }
             return result;
+        }
+
+        public static uint[] FromBytesLE(byte[] input)
+        {
+            var buf = input.ToArray();
+            Array.Reverse(buf);
+            return FromBytesBE(buf);
         }
 
         public static byte[] ToBytes(uint[] input)

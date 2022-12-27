@@ -1,3 +1,4 @@
+using System.Numerics;
 using Koyashiro.UdonJwt.Asn1;
 using Koyashiro.UdonJwt.PKCS1;
 
@@ -5,7 +6,7 @@ namespace Koyashiro.UdonJwt.PKCS8
 {
     public static class PKCS8PublicKeyDecoder
     {
-        public static bool TryDecode(byte[] input, out byte[] n, out int e)
+        public static bool TryDecode(byte[] input, out BigInteger n, out int e)
         {
             var index = 0;
 

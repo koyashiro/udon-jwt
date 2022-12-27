@@ -366,9 +366,25 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1291183223}
-  _publicKey: 
+  _publicKey: '-----BEGIN PUBLIC KEY-----
+
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvKr5fA0u0pSygsm1SjGQ
+
+    8ZQUzIEhzWhpjGxsS6A43jgRHa7BWy2/Rz+47mJXmd6xWfpXkFoUSBtohVLAPrlr
+
+    XACMiY9BvlHYfQfC+CQuNIGiYabIQbW2D5tVRw/TuxU6a1MZep1yEvIdD/+z/0sx
+
+    QJutDV+nvUaYEUnpsIzfxBINzHI+LHjNk+BZibtZdufT7nDIDsed3RMh7vD24ZnF
+
+    Nezm8URJ6jwyt8lH1w1CU8nnXdioG2Y4y7PJhlAlBOkq8PtxUYeA0FTfRrdZrZXc
+
+    pzpICTKQUpb/E2mikwxZq9SwZZR32z+ZvVofEPwKgSo92ctgpan4EF783oAF3Ydm
+
+    GQIDAQAB
+
+    -----END
+    PUBLIC KEY-----'
   _e: 0
-  _r: 
   _r2: 
   _n: 
   _nPrime: 

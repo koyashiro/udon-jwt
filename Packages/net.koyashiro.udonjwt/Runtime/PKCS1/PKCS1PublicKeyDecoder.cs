@@ -1,16 +1,17 @@
 using System;
+using System.Numerics;
 using Koyashiro.UdonJwt.Asn1;
 
 namespace Koyashiro.UdonJwt.PKCS1
 {
     public static class PKCS1PublicKeyDecoder
     {
-        public static bool TryDecode(byte[] input, out byte[] m, out int n)
+        public static bool TryDecode(byte[] input, out BigInteger m, out int n)
         {
             return TryDecode(input, 0, out m, out n);
         }
 
-        public static bool TryDecode(byte[] input, int startIndex, out byte[] n, out int e)
+        public static bool TryDecode(byte[] input, int startIndex, out BigInteger n, out int e)
         {
             var index = startIndex;
 
@@ -30,8 +31,11 @@ namespace Koyashiro.UdonJwt.PKCS1
                 e = default;
                 return false;
             }
-            n = new byte[valueLength];
-            Array.Copy(input, valueStartIndex, n, 0, valueLength);
+            var nBytes = new byte[valueLength];
+            Array.Copy(input, valueStartIndex, nBytes, 0, valueLength);
+            // bigendian to littleendian
+            Array.Reverse(nBytes);
+            n = new BigInteger(nBytes);
             index = valueStartIndex + valueLength;
 
             // INTEGER
