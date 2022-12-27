@@ -31,8 +31,8 @@ namespace Koyashiro.UdonJwt.PKCS1
                 e = default;
                 return false;
             }
-            var nBytes = new byte[valueLength];
-            Array.Copy(input, valueStartIndex, nBytes, 0, valueLength);
+            var nBytes = new byte[valueLength + 1];
+            Array.Copy(input, valueStartIndex, nBytes, 1, valueLength);
             // bigendian to littleendian
             Array.Reverse(nBytes);
             n = new BigInteger(nBytes);
