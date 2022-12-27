@@ -1,5 +1,4 @@
 #if UNITY_EDITOR
-using System;
 using System.Numerics;
 using UnityEngine;
 using UnityEditor;
@@ -49,9 +48,9 @@ namespace Koyashiro.UdonJwt.Editor
 
                 jwtDecoder.SetPublicKey(
                     e,
-                    ToUnsignedBigInteger(r2),
-                    ToUnsignedBigInteger(n),
-                    ToUnsignedBigInteger(nPrime)
+                    UnsignedBigInteger.FromBytesBE(r2.ToByteArray()),
+                    UnsignedBigInteger.FromBytesBE(n.ToByteArray()),
+                    UnsignedBigInteger.FromBytesBE(nPrime.ToByteArray())
                 );
 
                 EditorUtility.SetDirty(jwtDecoder);
@@ -77,19 +76,6 @@ namespace Koyashiro.UdonJwt.Editor
             }
 
             return nPrime;
-        }
-
-        private static uint[] ToUnsignedBigInteger(BigInteger value)
-        {
-            var bytesFromBigInteger = value.ToByteArray();
-            // littleendian to bigendian
-            Array.Reverse(bytesFromBigInteger);
-
-            const int BYTES_LENGTH = 64;
-            var bytes = new byte[BYTES_LENGTH];
-            Array.Copy(bytesFromBigInteger, bytes, BYTES_LENGTH);
-
-            return UnsignedBigInteger.FromBytes(bytes);
         }
     }
 }
