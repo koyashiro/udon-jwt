@@ -95,24 +95,57 @@ namespace Koyashiro.UdonJwt
         private bool GetCheckedHeaderJson(string headerBase64, out UdonJsonValue json)
         {
             var headerBytes = UdonUTF8.GetString(Convert.FromBase64String(headerBase64));
-            if (!UdonJsonDeserializer.TryDeserialize(headerBytes, out json)) return false;
-            if (json.GetKind() != UdonJsonValueKind.Object) return false;
+
+            if (!UdonJsonDeserializer.TryDeserialize(headerBytes, out json))
+            {
+                return false;
+            };
+
+            if (json.GetKind() != UdonJsonValueKind.Object)
+            {
+                json = default;
+                return false;
+            }
 
             //check algorithm
             // TODO: TryGetValue for UdonJson
             var expirationValue = _payloadJson.GetValue("alg");
-            if (expirationValue == null) return false;
-            if (expirationValue.GetKind() != UdonJsonValueKind.String) return false;
+            if (expirationValue == null)
+            {
+                json = default;
+                return false;
+            }
+
+            if (expirationValue.GetKind() != UdonJsonValueKind.String)
+            {
+                json = default;
+                return false;
+            }
+
             var algorithm = expirationValue.AsString();
-            if (algorithm != "RS256") return false; //not RS256 algorithm
-            return true; // check OK
+            if (algorithm != "RS256")
+            {
+                json = default;
+                return false;
+            }
+
+            return true;
         }
 
         private bool GetCheckedPayloadJson(string payloadBase64, out UdonJsonValue json)
         {
             var payloadBytes = UdonUTF8.GetString(Convert.FromBase64String(payloadBase64));
-            if (!UdonJsonDeserializer.TryDeserialize(payloadBytes, out json)) return false;
-            if (json.GetKind() != UdonJsonValueKind.Object) return false;
+            if (!UdonJsonDeserializer.TryDeserialize(payloadBytes, out json))
+            {
+                return false;
+            }
+
+            if (json.GetKind() != UdonJsonValueKind.Object)
+            {
+                json = default;
+                return false;
+            }
+
             return true; // check OK
         }
 
