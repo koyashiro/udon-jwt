@@ -89,7 +89,7 @@ namespace Koyashiro.UdonJwt
             }
 
             var signatureBytes = Convert.FromBase64String(ToBase64(signature));
-            ModPow(UnsignedBigInteger.FromBytesBE(signatureBytes));
+            ModPow(UnsignedBigInteger.FromBytes(signatureBytes));
         }
 
         private bool GetCheckedHeaderJson(string headerBase64, out UdonJsonValue json)
