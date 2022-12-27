@@ -48,9 +48,9 @@ namespace Koyashiro.UdonJwt.Editor
 
                 jwtDecoder.SetPublicKey(
                     e,
-                    UnsignedBigInteger.FromBytesBE(r2.ToByteArray()),
-                    UnsignedBigInteger.FromBytesBE(n.ToByteArray()),
-                    UnsignedBigInteger.FromBytesBE(nPrime.ToByteArray())
+                    UnsignedBigInteger.FromBytesLE(r2.ToByteArray()),
+                    UnsignedBigInteger.FromBytesLE(n.ToByteArray()),
+                    UnsignedBigInteger.FromBytesLE(nPrime.ToByteArray())
                 );
 
                 EditorUtility.SetDirty(jwtDecoder);
