@@ -2,7 +2,7 @@ namespace Koyashiro.UdonJwt.Numerics
 {
     public static class UnsignedBigInteger
     {
-        public static uint[] FromBytes(byte[] input)
+        public static uint[] FromBytesBE(byte[] input)
         {
             var result = new uint[input.Length / 4];
             for (var i = 0; i < result.Length; i++)
@@ -12,6 +12,20 @@ namespace Koyashiro.UdonJwt.Numerics
                 var c = (uint)input[4 * i + 2] << 8;
                 var d = (uint)input[4 * i + 3];
                 result[result.Length - 1 - i] = a | b | c | d;
+            }
+            return result;
+        }
+
+        public static uint[] FromBytesLE(byte[] input)
+        {
+            var result = new uint[input.Length / 4];
+            for (var i = 0; i < result.Length; i++)
+            {
+                var a = (uint)input[4 * i + 3] << 24;
+                var b = (uint)input[4 * i + 2] << 16;
+                var c = (uint)input[4 * i + 1] << 8;
+                var d = (uint)input[4 * i];
+                result[i] = a | b | c | d;
             }
             return result;
         }
