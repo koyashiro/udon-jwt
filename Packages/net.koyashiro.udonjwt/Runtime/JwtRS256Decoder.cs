@@ -36,6 +36,7 @@ namespace Koyashiro.UdonJwt
 
         private string _tokenHashSource;
         private uint _totalStep;
+        private const uint SignatureLength = 256;
 
         public void SetPublicKey(int e, uint[] r2, uint[] n, uint[] nPrime)
         {
@@ -89,6 +90,12 @@ namespace Koyashiro.UdonJwt
             }
 
             var signatureBytes = Convert.FromBase64String(ToBase64(signature));
+            
+            if (signatureBytes.Length != SignatureLength)
+            {
+                DecodeError(JwtDecodeErrorKind.InvalidSignature);
+                return;
+            }
             ModPow(UnsignedBigInteger.FromBytesBE(signatureBytes));
         }
 
@@ -98,7 +105,7 @@ namespace Koyashiro.UdonJwt
             if (!UdonJsonDeserializer.TryDeserialize(headerStr, out _headerJson))
             {
                 return false;
-            };
+            }
 
             if (_headerJson.GetKind() != UdonJsonValueKind.Object)
             {
@@ -230,12 +237,19 @@ namespace Koyashiro.UdonJwt
             var tokenBytes = UdonUTF8.GetBytes(_tokenHashSource);
             var hashedTokenBytes = SHA256.ComputeHash(tokenBytes);
 
-            //TODO: Get hash from ModPow result.
+            //Get hash from ModPow result.
             var modPowResultBytes = UnsignedBigInteger.ToBytes(_modPowBuf);
-
-            for (var i = 0; i < hashedTokenBytes.Length; i++)
+            var hashLength = hashedTokenBytes.Length;
+            var modPowHashBytes = new byte[hashLength];
+            var index = 0;
+            for (var i = modPowResultBytes.Length - hashLength; i < modPowResultBytes.Length; i++)
             {
-                if (modPowResultBytes[i] != hashedTokenBytes[i])
+                modPowHashBytes[index++] = modPowResultBytes[i];
+            }
+
+            for (var i = 0; i < hashLength; i++)
+            {
+                if (modPowHashBytes[i] != hashedTokenBytes[i])
                 {
                     DecodeError(JwtDecodeErrorKind.InvalidSignature);
                     return;
@@ -244,6 +258,7 @@ namespace Koyashiro.UdonJwt
 
             // expiration check
             // TODO: TryGetValue for UdonJson
+            /*
             var expirationValue = _payloadJson.GetValue("exp");
 
             if (expirationValue != null)
@@ -260,7 +275,7 @@ namespace Koyashiro.UdonJwt
                     DecodeError(JwtDecodeErrorKind.ExpiredToken);
                     return;
                 }
-            }
+            }*/
 
             //JWT decode is success
             _callback.Result = true;
