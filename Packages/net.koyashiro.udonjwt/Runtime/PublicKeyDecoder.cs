@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using System.Linq;
 using Koyashiro.UdonJwt.PKCS8;
 
@@ -6,7 +7,7 @@ namespace Koyashiro.UdonJwt
 {
     public static class PublicKeyDecoder
     {
-        public static bool TryDecode(string input, out byte[] n, out int e)
+        public static bool TryDecode(string input, out BigInteger n, out int e)
         {
             if (input == null)
             {
@@ -38,6 +39,7 @@ namespace Koyashiro.UdonJwt
                 return false;
             }
 
+            // lines[1..^1];
             var base64Lines = string.Join("\n", lines.Skip(1).Take(lines.Length - 2));
             var bytes = Convert.FromBase64String(base64Lines);
             return PKCS8PublicKeyDecoder.TryDecode(bytes, out n, out e);

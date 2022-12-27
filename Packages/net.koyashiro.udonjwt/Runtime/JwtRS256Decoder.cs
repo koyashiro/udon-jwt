@@ -21,9 +21,6 @@ namespace Koyashiro.UdonJwt
         private int _e;
 
         [SerializeField, HideInInspector]
-        private uint[] _r;
-
-        [SerializeField, HideInInspector]
         private uint[] _r2;
 
         [SerializeField, HideInInspector]
@@ -40,10 +37,9 @@ namespace Koyashiro.UdonJwt
         private string _tokenHashSource;
         private uint _totalStep;
 
-        public void SetPublicKey(int e, uint[] r, uint[] r2, uint[] n, uint[] nPrime)
+        public void SetPublicKey(int e, uint[] r2, uint[] n, uint[] nPrime)
         {
             _e = e;
-            _r = r;
             _r2 = r2;
             _n = n;
             _nPrime = nPrime;
@@ -93,10 +89,10 @@ namespace Koyashiro.UdonJwt
             }
 
             var signatureBytes = Convert.FromBase64String(ToBase64(signature));
-            ModPow(UnsignedBigInteger.FromBytes(signatureBytes));
+            ModPow(UnsignedBigInteger.FromBytesBE(signatureBytes));
         }
 
-        private bool GetCheckedHeaderJson(string headerBase64,out UdonJsonValue json)
+        private bool GetCheckedHeaderJson(string headerBase64, out UdonJsonValue json)
         {
             var headerBytes = UdonUTF8.GetString(Convert.FromBase64String(headerBase64));
             if (!UdonJsonDeserializer.TryDeserialize(headerBytes, out json)) return false;
@@ -236,7 +232,7 @@ namespace Koyashiro.UdonJwt
                     DecodeError(JwtDecodeErrorKind.InvalidToken);
                     return;
                 }
-                var expiration =  (long)expirationValue.AsNumber();
+                var expiration = (long)expirationValue.AsNumber();
                 var nowUnixTime = GetNowUnixTime();
                 if (expiration < nowUnixTime)
                 {
