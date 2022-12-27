@@ -76,13 +76,13 @@ namespace Koyashiro.UdonJwt
             var signature = splitTokens[2];
             _tokenHashSource = token.Substring(0, header.Length + 1 + payload.Length);
 
-            if (!GetCheckedHeaderJson(ToBase64(header), out _headerJson))
+            if (!GetCheckedHeaderJson(ToBase64(header)))
             {
                 DecodeError(JwtDecodeErrorKind.InvalidToken);
                 return;
             }
 
-            if (!GetCheckedPayloadJson(ToBase64(payload), out _payloadJson))
+            if (!GetCheckedPayloadJson(ToBase64(payload)))
             {
                 DecodeError(JwtDecodeErrorKind.InvalidToken);
                 return;
@@ -92,57 +92,45 @@ namespace Koyashiro.UdonJwt
             ModPow(UnsignedBigInteger.FromBytesBE(signatureBytes));
         }
 
-        private bool GetCheckedHeaderJson(string headerBase64, out UdonJsonValue json)
+        private bool GetCheckedHeaderJson(string headerBase64)
         {
-            var headerBytes = UdonUTF8.GetString(Convert.FromBase64String(headerBase64));
-
-            if (!UdonJsonDeserializer.TryDeserialize(headerBytes, out json))
+            var headerStr = UdonUTF8.GetString(Convert.FromBase64String(headerBase64));
+            if (!UdonJsonDeserializer.TryDeserialize(headerStr, out _headerJson))
             {
                 return false;
             };
 
-            if (json.GetKind() != UdonJsonValueKind.Object)
+            if (_headerJson.GetKind() != UdonJsonValueKind.Object)
             {
-                json = default;
                 return false;
             }
 
-            //check algorithm
-            // TODO: TryGetValue for UdonJson
-            var expirationValue = _payloadJson.GetValue("alg");
-            if (expirationValue == null)
-            {
-                json = default;
-                return false;
-            }
+            var expirationValue = _headerJson.GetValue("alg");
 
             if (expirationValue.GetKind() != UdonJsonValueKind.String)
             {
-                json = default;
                 return false;
             }
 
             var algorithm = expirationValue.AsString();
             if (algorithm != "RS256")
             {
-                json = default;
                 return false;
             }
 
             return true;
         }
 
-        private bool GetCheckedPayloadJson(string payloadBase64, out UdonJsonValue json)
+        private bool GetCheckedPayloadJson(string payloadBase64)
         {
-            var payloadBytes = UdonUTF8.GetString(Convert.FromBase64String(payloadBase64));
-            if (!UdonJsonDeserializer.TryDeserialize(payloadBytes, out json))
+            var payloadStr = UdonUTF8.GetString(Convert.FromBase64String(payloadBase64));
+            if (!UdonJsonDeserializer.TryDeserialize(payloadStr, out _payloadJson))
             {
                 return false;
             }
 
-            if (json.GetKind() != UdonJsonValueKind.Object)
+            if (_payloadJson.GetKind() != UdonJsonValueKind.Object)
             {
-                json = default;
                 return false;
             }
 
