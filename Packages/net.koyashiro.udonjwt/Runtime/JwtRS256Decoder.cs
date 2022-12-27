@@ -4,6 +4,7 @@ using UdonSharp;
 using Koyashiro.UdonJson;
 using Koyashiro.UdonEncoding;
 using Koyashiro.UdonJwt.Numerics;
+using Koyashiro.UdonJwt.PKCS1;
 using Koyashiro.UdonJwt.SHA2;
 using VRC.SDKBase;
 
@@ -234,19 +235,18 @@ namespace Koyashiro.UdonJwt
 
         public void _VerifyHash()
         {
-            // Get hash from header and payload
-            var tokenBytes = UdonUTF8.GetBytes(_tokenHashSource);
-            var hashedTokenBytes = SHA256.ComputeHash(tokenBytes);
+            var em = UnsignedBigInteger.ToBytes(_modPowBuf);
+            var emPrime = PKCS1V15Encoder.Encode(UdonUTF8.GetBytes(_tokenHashSource));
 
-            // Get hash from ModPow result.
-            var modPowResultBytes = UnsignedBigInteger.ToBytes(_modPowBuf);
-            var hashLength = hashedTokenBytes.Length;
-            var modPowHashBytes = new byte[hashLength];
-            Array.Copy(modPowResultBytes, modPowResultBytes.Length - hashLength, modPowHashBytes, 0, hashLength);
-
-            for (var i = 0; i < hashLength; i++)
+            if (em.Length != emPrime.Length)
             {
-                if (modPowHashBytes[i] != hashedTokenBytes[i])
+                DecodeError(JwtDecodeErrorKind.InvalidSignature);
+                return;
+            }
+
+            for (var i = 0; i < em.Length; i++)
+            {
+                if (em[i] != emPrime[i])
                 {
                     DecodeError(JwtDecodeErrorKind.InvalidSignature);
                     return;
