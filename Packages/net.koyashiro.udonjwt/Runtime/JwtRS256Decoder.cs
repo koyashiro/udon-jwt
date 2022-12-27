@@ -36,6 +36,7 @@ namespace Koyashiro.UdonJwt
 
         private string _tokenHashSource;
         private uint _totalStep;
+        private const uint SIGNATURE_LENGTH = 256;
 
         public void SetPublicKey(int e, uint[] r2, uint[] n, uint[] nPrime)
         {
@@ -70,7 +71,7 @@ namespace Koyashiro.UdonJwt
                 return;
             }
 
-            //get data
+            // Get data
             var header = splitTokens[0];
             var payload = splitTokens[1];
             var signature = splitTokens[2];
@@ -89,6 +90,13 @@ namespace Koyashiro.UdonJwt
             }
 
             var signatureBytes = Convert.FromBase64String(ToBase64(signature));
+
+            if (signatureBytes.Length != SIGNATURE_LENGTH)
+            {
+                DecodeError(JwtDecodeErrorKind.InvalidSignature);
+                return;
+            }
+
             ModPow(UnsignedBigInteger.FromBytesBE(signatureBytes));
         }
 
@@ -98,7 +106,7 @@ namespace Koyashiro.UdonJwt
             if (!UdonJsonDeserializer.TryDeserialize(headerStr, out _headerJson))
             {
                 return false;
-            };
+            }
 
             if (_headerJson.GetKind() != UdonJsonValueKind.Object)
             {
@@ -134,7 +142,7 @@ namespace Koyashiro.UdonJwt
                 return false;
             }
 
-            return true; // check OK
+            return true; // Check OK
         }
 
         #region Montgomery
@@ -226,24 +234,28 @@ namespace Koyashiro.UdonJwt
 
         public void _VerifyHash()
         {
-            //get hash from header and payload
+            // Get hash from header and payload
             var tokenBytes = UdonUTF8.GetBytes(_tokenHashSource);
             var hashedTokenBytes = SHA256.ComputeHash(tokenBytes);
 
-            //TODO: Get hash from ModPow result.
+            // Get hash from ModPow result.
             var modPowResultBytes = UnsignedBigInteger.ToBytes(_modPowBuf);
+            var hashLength = hashedTokenBytes.Length;
+            var modPowHashBytes = new byte[hashLength];
+            Array.Copy(modPowResultBytes, modPowResultBytes.Length - hashLength, modPowHashBytes, 0, hashLength);
 
-            for (var i = 0; i < hashedTokenBytes.Length; i++)
+            for (var i = 0; i < hashLength; i++)
             {
-                if (modPowResultBytes[i] != hashedTokenBytes[i])
+                if (modPowHashBytes[i] != hashedTokenBytes[i])
                 {
                     DecodeError(JwtDecodeErrorKind.InvalidSignature);
                     return;
                 }
             }
 
-            // expiration check
+            // Expiration check
             // TODO: TryGetValue for UdonJson
+            /*
             var expirationValue = _payloadJson.GetValue("exp");
 
             if (expirationValue != null)
@@ -260,9 +272,9 @@ namespace Koyashiro.UdonJwt
                     DecodeError(JwtDecodeErrorKind.ExpiredToken);
                     return;
                 }
-            }
+            }*/
 
-            //JWT decode is success
+            // JWT decode is success
             _callback.Result = true;
             _callback.ErrorKind = JwtDecodeErrorKind.None;
             _callback.Header = _headerJson;
