@@ -1,6 +1,4 @@
 using UnityEngine;
-using UdonSharp;
-using Koyashiro.UdonJson;
 using Koyashiro.UdonTest;
 using Koyashiro.UdonJwt.Numerics;
 
@@ -20,6 +18,11 @@ namespace Koyashiro.UdonJwt.Tests
         public override void OnEnd()
         {
             Assert.True(Result);
+            if (!Result)
+            {
+                var errorNames = new string[] { "None", "Busy", "InvalidToken", "InvalidSignature", "ExpiredToken", "Other" };
+                Debug.Log("JWT decode error: " + errorNames[(int)ErrorKind]);
+            }
         }
     }
 }
