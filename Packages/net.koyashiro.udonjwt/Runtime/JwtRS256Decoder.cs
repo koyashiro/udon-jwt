@@ -133,14 +133,17 @@ namespace Koyashiro.UdonJwt
                 return false;
             }
 
-            var expirationValue = _headerJson.GetValue("alg");
-
-            if (expirationValue.GetKind() != UdonJsonValueKind.String)
+            if (!_headerJson.TryGetValue("alg", out var algorithmValue))
             {
                 return false;
             }
 
-            var algorithm = expirationValue.AsString();
+            if (algorithmValue.GetKind() != UdonJsonValueKind.String)
+            {
+                return false;
+            }
+
+            var algorithm = algorithmValue.AsString();
             if (algorithm != "RS256")
             {
                 return false;
@@ -162,7 +165,7 @@ namespace Koyashiro.UdonJwt
                 return false;
             }
 
-            return true; // Check OK
+            return true;
         }
 
         #region Montgomery
@@ -273,17 +276,14 @@ namespace Koyashiro.UdonJwt
             }
 
             // Expiration check
-            // TODO: TryGetValue for UdonJson
-            /*
-            var expirationValue = _payloadJson.GetValue("exp");
-
-            if (expirationValue != null)
+            if (_payloadJson.TryGetValue("exp", out var expirationValue))
             {
                 if (expirationValue.GetKind() != UdonJsonValueKind.Number)
                 {
                     DecodeError(JwtDecodeErrorKind.InvalidToken);
                     return;
                 }
+
                 var expiration = (long)expirationValue.AsNumber();
                 var nowUnixTime = GetNowUnixTime();
                 if (expiration < nowUnixTime)
@@ -291,7 +291,7 @@ namespace Koyashiro.UdonJwt
                     DecodeError(JwtDecodeErrorKind.ExpiredToken);
                     return;
                 }
-            }*/
+            }
 
             // JWT decode is success
             _callback.Result = true;
