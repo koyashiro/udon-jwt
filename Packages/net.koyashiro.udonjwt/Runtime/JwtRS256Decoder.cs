@@ -18,7 +18,7 @@ namespace Koyashiro.UdonJwt
 
         [SerializeField, HideInInspector]
         private int _e;
-        private int _eBuff;
+        private int _eBuf;
 
         [SerializeField, HideInInspector]
         private uint[] _r2;
@@ -103,7 +103,7 @@ namespace Koyashiro.UdonJwt
 
         private void InitializeParameters(JwtDecorderCallback callback)
         {
-            _eBuff = _e;
+            _eBuf = _e;
             _headerJson = null;
             _payloadJson = null;
             _tokenHashSource = null;
@@ -170,7 +170,7 @@ namespace Koyashiro.UdonJwt
         {
             _totalStep = 1;
 
-            for (var e = _eBuff; e > 0; e >>= 1)
+            for (var e = _eBuf; e > 0; e >>= 1)
             {
                 _totalStep += 1;
             }
@@ -183,14 +183,14 @@ namespace Koyashiro.UdonJwt
 
         public void _ModPowLoop()
         {
-            if (_eBuff > 0)
+            if (_eBuf > 0)
             {
-                if (_eBuff % 2 != 0)
+                if (_eBuf % 2 != 0)
                 {
                     _modPowBuf = MontgomeryReduction(UnsignedBigInteger.Multiply(_modPowBuf, _modPowBase));
                 }
                 _modPowBase = MontgomeryReduction(UnsignedBigInteger.Multiply(_modPowBase, _modPowBase));
-                _eBuff >>= 1;
+                _eBuf >>= 1;
                 _callback.Progress += 1f / (float)_totalStep;
                 _callback.OnProgress();
                 SendCustomEventDelayedFrames(nameof(_ModPowLoop), 1);
