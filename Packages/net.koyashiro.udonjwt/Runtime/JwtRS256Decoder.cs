@@ -104,16 +104,16 @@ namespace Koyashiro.UdonJwt
         private void InitializeParameters(JwtDecorderCallback callback)
         {
             _eBuf = _e;
-            _headerJson = null;
-            _payloadJson = null;
-            _tokenHashSource = null;
-            _totalStep = 0;
+            _headerJson = default;
+            _payloadJson = default;
+            _tokenHashSource = default;
+            _totalStep = default;
             _callback = callback;
-            _callback.Result = false;
-            _callback.ErrorKind = JwtDecodeErrorKind.None;
-            _callback.Header = null;
-            _callback.Payload = null;
-            _callback.Progress = 0;
+            _callback.Result = default;
+            _callback.ErrorKind = default;
+            _callback.Header = default;
+            _callback.Payload = default;
+            _callback.Progress = default;
         }
 
         private bool GetCheckedHeaderJson(string headerBase64)
