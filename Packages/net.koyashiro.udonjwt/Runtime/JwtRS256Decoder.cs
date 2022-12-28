@@ -41,6 +41,10 @@ namespace Koyashiro.UdonJwt
         private uint _totalStep;
         private const uint SIGNATURE_LENGTH = 256;
 
+        public int E => _e;
+        public uint[] N => _n;
+        public bool HasPublicKey => _e != 0 && _r2 != null && _n != null && _nPrime != null;
+
         public void SetPublicKey(int e, uint[] r2, uint[] n, uint[] nPrime)
         {
             _e = e;
