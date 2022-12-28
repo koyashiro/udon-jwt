@@ -15,12 +15,10 @@ namespace Koyashiro.UdonJwt
         [SerializeField, TextArea(10, 20)]
         private string _publicKey;
         public string PublicKey => _publicKey;
-        public bool Busy => _busy;
-        private bool _busy;
 
         [SerializeField, HideInInspector]
-        private int _eSrc;
         private int _e;
+        private int _eBuff;
 
         [SerializeField, HideInInspector]
         private uint[] _r2;
@@ -30,6 +28,9 @@ namespace Koyashiro.UdonJwt
 
         [SerializeField, HideInInspector]
         private uint[] _nPrime;
+
+        public bool IsBusy => _isBusy;
+        private bool _isBusy;
 
         private JwtDecorderCallback _callback;
 
@@ -42,7 +43,7 @@ namespace Koyashiro.UdonJwt
 
         public void SetPublicKey(int e, uint[] r2, uint[] n, uint[] nPrime)
         {
-            _eSrc = e;
+            _e = e;
             _r2 = r2;
             _n = n;
             _nPrime = nPrime;
@@ -50,12 +51,12 @@ namespace Koyashiro.UdonJwt
 
         public void Decode(string token, JwtDecorderCallback callback)
         {
-            if (_busy)
+            if (_isBusy)
             {
                 DecodeError(JwtDecodeErrorKind.Busy);
                 return;
             }
-            _busy = true;
+            _isBusy = true;
             InitializeParameters(callback);
 
             if (token == null)
@@ -102,7 +103,7 @@ namespace Koyashiro.UdonJwt
 
         private void InitializeParameters(JwtDecorderCallback callback)
         {
-            _e = _eSrc;
+            _eBuff = _e;
             _headerJson = null;
             _payloadJson = null;
             _tokenHashSource = null;
@@ -169,7 +170,7 @@ namespace Koyashiro.UdonJwt
         {
             _totalStep = 1;
 
-            for (var e = _e; e > 0; e >>= 1)
+            for (var e = _eBuff; e > 0; e >>= 1)
             {
                 _totalStep += 1;
             }
@@ -182,14 +183,14 @@ namespace Koyashiro.UdonJwt
 
         public void _ModPowLoop()
         {
-            if (_e > 0)
+            if (_eBuff > 0)
             {
-                if (_e % 2 != 0)
+                if (_eBuff % 2 != 0)
                 {
                     _modPowBuf = MontgomeryReduction(UnsignedBigInteger.Multiply(_modPowBuf, _modPowBase));
                 }
                 _modPowBase = MontgomeryReduction(UnsignedBigInteger.Multiply(_modPowBase, _modPowBase));
-                _e >>= 1;
+                _eBuff >>= 1;
                 _callback.Progress += 1f / (float)_totalStep;
                 _callback.OnProgress();
                 SendCustomEventDelayedFrames(nameof(_ModPowLoop), 1);
@@ -296,7 +297,7 @@ namespace Koyashiro.UdonJwt
             _callback.Progress = 1;
             _callback.OnProgress();
             _callback.OnEnd();
-            _busy = false;
+            _isBusy = false;
         }
 
         private long GetNowUnixTime()
@@ -315,7 +316,7 @@ namespace Koyashiro.UdonJwt
             _callback.Progress = 1;
             _callback.OnProgress();
             _callback.OnEnd();
-            _busy = false;
+            _isBusy = false;
         }
 
         private static string ToBase64(string base64Url)
