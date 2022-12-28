@@ -37,11 +37,7 @@ namespace Koyashiro.UdonJwt
 
         private string _tokenHashSource;
         private uint _totalStep;
-<<<<<<< HEAD
-        private const uint SignatureLength = 256;
-=======
         private const uint SIGNATURE_LENGTH = 256;
->>>>>>> 6a64e0e238ea778956328e5a35c57cb4c38df2d2
 
         public void SetPublicKey(int e, uint[] r2, uint[] n, uint[] nPrime)
         {
@@ -95,21 +91,13 @@ namespace Koyashiro.UdonJwt
             }
 
             var signatureBytes = Convert.FromBase64String(ToBase64(signature));
-<<<<<<< HEAD
-            
-            if (signatureBytes.Length != SignatureLength)
-=======
 
             if (signatureBytes.Length != SIGNATURE_LENGTH)
->>>>>>> 6a64e0e238ea778956328e5a35c57cb4c38df2d2
             {
                 DecodeError(JwtDecodeErrorKind.InvalidSignature);
                 return;
             }
-<<<<<<< HEAD
-=======
 
->>>>>>> 6a64e0e238ea778956328e5a35c57cb4c38df2d2
             ModPow(UnsignedBigInteger.FromBytesBE(signatureBytes));
         }
 
@@ -250,21 +238,7 @@ namespace Koyashiro.UdonJwt
             var em = UnsignedBigInteger.ToBytes(_modPowBuf);
             var emPrime = PKCS1V15Encoder.Encode(UdonUTF8.GetBytes(_tokenHashSource));
 
-<<<<<<< HEAD
-            //Get hash from ModPow result.
-            var modPowResultBytes = UnsignedBigInteger.ToBytes(_modPowBuf);
-            var hashLength = hashedTokenBytes.Length;
-            var modPowHashBytes = new byte[hashLength];
-            var index = 0;
-            for (var i = modPowResultBytes.Length - hashLength; i < modPowResultBytes.Length; i++)
-            {
-                modPowHashBytes[index++] = modPowResultBytes[i];
-            }
 
-            for (var i = 0; i < hashLength; i++)
-            {
-                if (modPowHashBytes[i] != hashedTokenBytes[i])
-=======
             if (em.Length != emPrime.Length)
             {
                 DecodeError(JwtDecodeErrorKind.InvalidSignature);
@@ -274,7 +248,6 @@ namespace Koyashiro.UdonJwt
             for (var i = 0; i < em.Length; i++)
             {
                 if (em[i] != emPrime[i])
->>>>>>> 6a64e0e238ea778956328e5a35c57cb4c38df2d2
                 {
                     DecodeError(JwtDecodeErrorKind.InvalidSignature);
                     return;
