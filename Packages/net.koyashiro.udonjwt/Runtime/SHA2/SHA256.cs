@@ -5,7 +5,7 @@ namespace Koyashiro.UdonJwt.SHA2
     public static class SHA256
     {
         private const int MESSAGE_BLOCK_LENGTH = 64;
-        private const int DIGEST_LENGTH = 32;
+        public const int DIGEST_LENGTH = 32;
 
         public static byte[] ComputeHash(byte[] buffer)
         {
