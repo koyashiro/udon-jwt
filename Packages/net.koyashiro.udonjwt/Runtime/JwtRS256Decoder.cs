@@ -238,7 +238,6 @@ namespace Koyashiro.UdonJwt
             var em = UnsignedBigInteger.ToBytes(_modPowBuf);
             var emPrime = PKCS1V15Encoder.Encode(UdonUTF8.GetBytes(_tokenHashSource));
 
-
             if (em.Length != emPrime.Length)
             {
                 DecodeError(JwtDecodeErrorKind.InvalidSignature);
