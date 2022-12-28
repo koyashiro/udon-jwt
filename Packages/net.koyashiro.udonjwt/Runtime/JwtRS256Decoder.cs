@@ -19,6 +19,7 @@ namespace Koyashiro.UdonJwt
         private bool _busy;
 
         [SerializeField, HideInInspector]
+        private int _eSrc;
         private int _e;
 
         [SerializeField, HideInInspector]
@@ -41,7 +42,7 @@ namespace Koyashiro.UdonJwt
 
         public void SetPublicKey(int e, uint[] r2, uint[] n, uint[] nPrime)
         {
-            _e = e;
+            _eSrc = e;
             _r2 = r2;
             _n = n;
             _nPrime = nPrime;
@@ -55,9 +56,7 @@ namespace Koyashiro.UdonJwt
                 return;
             }
             _busy = true;
-
-            _callback = callback;
-            _callback.Progress = 0;
+            InitializeParameters(callback);
 
             if (token == null)
             {
@@ -99,6 +98,21 @@ namespace Koyashiro.UdonJwt
             }
 
             ModPow(UnsignedBigInteger.FromBytesBE(signatureBytes));
+        }
+
+        private void InitializeParameters(JwtDecorderCallback callback)
+        {
+            _e = _eSrc;
+            _headerJson = null;
+            _payloadJson = null;
+            _tokenHashSource = null;
+            _totalStep = 0;
+            _callback = callback;
+            _callback.Result = false;
+            _callback.ErrorKind = JwtDecodeErrorKind.None;
+            _callback.Header = null;
+            _callback.Payload = null;
+            _callback.Progress = 0;
         }
 
         private bool GetCheckedHeaderJson(string headerBase64)
