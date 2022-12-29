@@ -75,25 +75,30 @@ namespace Koyashiro.UdonJwt
                 return;
             }
 
-            // Get data
             var header = splitTokens[0];
             var payload = splitTokens[1];
             var signature = splitTokens[2];
             _tokenHashSource = token.Substring(0, header.Length + 1 + payload.Length);
 
-            if (!GetCheckedHeaderJson(ToBase64(header)))
+            if (!TryParseHeaderBase64Url(header, out var headerJson))
             {
                 DecodeError(JwtDecodeErrorKind.InvalidToken);
                 return;
             }
+            _headerJson = headerJson;
 
-            if (!GetCheckedPayloadJson(ToBase64(payload)))
+            if (!TryParsePayloadBase64Url(payload, out var payloadJson))
             {
                 DecodeError(JwtDecodeErrorKind.InvalidToken);
                 return;
             }
+            _payloadJson = payloadJson;
 
-            var signatureBytes = Convert.FromBase64String(ToBase64(signature));
+            if (!TryFromBase64Url(signature, out var signatureBytes))
+            {
+                DecodeError(JwtDecodeErrorKind.InvalidToken);
+                return;
+            }
 
             if (signatureBytes.Length != SIGNATURE_LENGTH)
             {
@@ -119,48 +124,61 @@ namespace Koyashiro.UdonJwt
             _callback.Progress = default;
         }
 
-        private bool GetCheckedHeaderJson(string headerBase64)
+        private static bool TryParseBase64Url(string base64Url, out UdonJsonValue value)
         {
-            var headerStr = UdonUTF8.GetString(Convert.FromBase64String(headerBase64));
-            if (!UdonJsonDeserializer.TryDeserialize(headerStr, out var headerJson))
+            if (!TryFromBase64Url(base64Url, out var bytes))
             {
+                value = default;
                 return false;
             }
 
-            _headerJson = headerJson;
+            var str = UdonUTF8.GetString(bytes);
+            return UdonJsonDeserializer.TryDeserialize(str, out value);
+        }
+
+        private static bool TryParseHeaderBase64Url(string headerBase64Url, out UdonJsonValue headerJson)
+        {
+            if (!TryParseBase64Url(headerBase64Url, out headerJson))
+            {
+                headerJson = default;
+                return false;
+            }
 
             if (headerJson.GetKind() != UdonJsonValueKind.Object)
             {
+                headerJson = default;
                 return false;
             }
 
             if (!headerJson.TryGetValue("alg", out var algorithmValue))
             {
+                headerJson = default;
                 return false;
             }
 
             if (algorithmValue.GetKind() != UdonJsonValueKind.String)
             {
+                headerJson = default;
                 return false;
             }
 
             var algorithm = algorithmValue.AsString();
             if (algorithm != "RS256")
             {
+                headerJson = default;
                 return false;
             }
 
             return true;
         }
 
-        private bool GetCheckedPayloadJson(string payloadBase64)
+        private static bool TryParsePayloadBase64Url(string payloadBase64Url, out UdonJsonValue payloadJson)
         {
-            var payloadStr = UdonUTF8.GetString(Convert.FromBase64String(payloadBase64));
-            if (!UdonJsonDeserializer.TryDeserialize(payloadStr, out var payloadJson))
+            if (!TryParseBase64Url(payloadBase64Url, out payloadJson))
             {
+                payloadJson = default;
                 return false;
             }
-            _payloadJson = payloadJson;
 
             if (payloadJson.GetKind() != UdonJsonValueKind.Object)
             {
@@ -309,7 +327,7 @@ namespace Koyashiro.UdonJwt
             _isBusy = false;
         }
 
-        private long GetNowUnixTime()
+        private static long GetNowUnixTime()
         {
             var serverTimeTicks = Networking.GetNetworkDateTime().Ticks;
             var dto = new DateTimeOffset(serverTimeTicks, new TimeSpan(00, 00, 00));
@@ -328,14 +346,23 @@ namespace Koyashiro.UdonJwt
             _isBusy = false;
         }
 
-        private static string ToBase64(string base64Url)
+        private static bool TryFromBase64Url(string base64Url, out byte[] bytes)
         {
+            foreach (var c in base64Url)
+            {
+                if ("-_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".IndexOf(c) == -1)
+                {
+                    bytes = default;
+                    return false;
+                }
+            }
+
             var base64 = base64Url.Replace('-', '+').Replace('_', '/');
             switch (base64.Length % 4)
             {
                 case 1:
-                    base64 += "===";
-                    break;
+                    bytes = default;
+                    return false;
                 case 2:
                     base64 += "==";
                     break;
@@ -343,7 +370,9 @@ namespace Koyashiro.UdonJwt
                     base64 += "=";
                     break;
             }
-            return base64;
+
+            bytes = Convert.FromBase64String(base64);
+            return true;
         }
     }
 }
