@@ -16,7 +16,7 @@
       "version": "0.3.0"
     },
     "net.koyashiro.udonjson": {
-      "version": "0.9.1"
+      "version": "0.10.0"
     }
   },
   "locked": {
@@ -77,7 +77,7 @@
       }
     },
     "net.koyashiro.udonjson": {
-      "version": "0.9.1",
+      "version": "0.10.0",
       "dependencies": {
         "com.vrchat.udonsharp": "1.1.6",
         "net.koyashiro.udondictionary": "0.8.0",
