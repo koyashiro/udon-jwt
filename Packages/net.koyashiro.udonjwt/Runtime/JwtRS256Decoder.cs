@@ -34,8 +34,8 @@ namespace Koyashiro.UdonJwt
 
         private JwtDecorderCallback _callback;
 
-        private UdonJsonValue _headerJson;
-        private UdonJsonValue _payloadJson;
+        private object _headerJson;
+        private object _payloadJson;
 
         private string _tokenHashSource;
         private uint _totalStep;
@@ -123,17 +123,19 @@ namespace Koyashiro.UdonJwt
         private bool GetCheckedHeaderJson(string headerBase64)
         {
             var headerStr = UdonUTF8.GetString(Convert.FromBase64String(headerBase64));
-            if (!UdonJsonDeserializer.TryDeserialize(headerStr, out _headerJson))
+            if (!UdonJsonDeserializer.TryDeserialize(headerStr, out var headerJson))
             {
                 return false;
             }
 
-            if (_headerJson.GetKind() != UdonJsonValueKind.Object)
+            _headerJson = headerJson;
+
+            if (headerJson.GetKind() != UdonJsonValueKind.Object)
             {
                 return false;
             }
 
-            if (!_headerJson.TryGetValue("alg", out var algorithmValue))
+            if (!headerJson.TryGetValue("alg", out var algorithmValue))
             {
                 return false;
             }
@@ -155,12 +157,13 @@ namespace Koyashiro.UdonJwt
         private bool GetCheckedPayloadJson(string payloadBase64)
         {
             var payloadStr = UdonUTF8.GetString(Convert.FromBase64String(payloadBase64));
-            if (!UdonJsonDeserializer.TryDeserialize(payloadStr, out _payloadJson))
+            if (!UdonJsonDeserializer.TryDeserialize(payloadStr, out var payloadJson))
             {
                 return false;
             }
+            _payloadJson = payloadJson;
 
-            if (_payloadJson.GetKind() != UdonJsonValueKind.Object)
+            if (payloadJson.GetKind() != UdonJsonValueKind.Object)
             {
                 return false;
             }
@@ -275,8 +278,11 @@ namespace Koyashiro.UdonJwt
                 }
             }
 
+            var headerJson = (UdonJsonValue)_headerJson;
+            var payloadJson = (UdonJsonValue)_payloadJson;
+
             // Expiration check
-            if (_payloadJson.TryGetValue("exp", out var expirationValue))
+            if (payloadJson.TryGetValue("exp", out var expirationValue))
             {
                 if (expirationValue.GetKind() != UdonJsonValueKind.Number)
                 {
@@ -296,8 +302,8 @@ namespace Koyashiro.UdonJwt
             // JWT decode is success
             _callback.Result = true;
             _callback.ErrorKind = JwtDecodeErrorKind.None;
-            _callback.Header = _headerJson;
-            _callback.Payload = _payloadJson;
+            _callback.Header = headerJson;
+            _callback.Payload = payloadJson;
             _callback.Progress = 1;
             _callback.OnProgress();
             _callback.OnEnd();
