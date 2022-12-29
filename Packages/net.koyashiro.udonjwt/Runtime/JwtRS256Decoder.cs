@@ -1,12 +1,11 @@
 using System;
 using UnityEngine;
+using VRC.SDKBase;
 using UdonSharp;
 using Koyashiro.UdonJson;
 using Koyashiro.UdonEncoding;
 using Koyashiro.UdonJwt.Numerics;
 using Koyashiro.UdonJwt.PKCS1;
-using Koyashiro.UdonJwt.SHA2;
-using VRC.SDKBase;
 
 namespace Koyashiro.UdonJwt
 {

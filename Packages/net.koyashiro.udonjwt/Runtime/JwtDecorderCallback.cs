@@ -1,16 +1,7 @@
 using UdonSharp;
 using Koyashiro.UdonJson;
-public enum JwtDecodeErrorKind
-{
-    None,
-    Busy,
-    InvalidToken,
-    InvalidSignature,
-    ExpiredToken,
-    Other,
-}
 
-namespace Koyashiro.UdonJwt.Numerics
+namespace Koyashiro.UdonJwt
 {
     public abstract class JwtDecorderCallback : UdonSharpBehaviour
     {
