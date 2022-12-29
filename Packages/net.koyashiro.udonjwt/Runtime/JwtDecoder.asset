@@ -548,13 +548,13 @@ MonoBehaviour:
       Data: 35|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Koyashiro.UdonJson.UdonJsonValue, Koyashiro.UdonJson
+      Data: System.Object, mscorlib
     - Name: 
       Entry: 8
       Data: 
     - Name: <SystemType>k__BackingField
       Entry: 9
-      Data: 32
+      Data: 35
     - Name: <SyncMode>k__BackingField
       Entry: 7
       Data: System.Nullable`1[[UdonSharp.UdonSyncMode, UdonSharp.Runtime]], mscorlib
@@ -602,7 +602,7 @@ MonoBehaviour:
       Data: 35
     - Name: <SystemType>k__BackingField
       Entry: 9
-      Data: 32
+      Data: 35
     - Name: <SyncMode>k__BackingField
       Entry: 7
       Data: System.Nullable`1[[UdonSharp.UdonSyncMode, UdonSharp.Runtime]], mscorlib
