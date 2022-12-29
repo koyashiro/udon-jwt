@@ -15,6 +15,11 @@ namespace Koyashiro.UdonJwt.Tests
             _decoder.Decode(token, this);
         }
 
+        public override void OnProgress()
+        {
+            Debug.Log("JWT decode progress: " + (uint)(Progress * 100) + "%");
+        }
+
         public override void OnEnd()
         {
             Assert.True(Result);
