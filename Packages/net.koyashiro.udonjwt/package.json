@@ -21,7 +21,7 @@
   "url": "https://github.com/koyashiro/udon-jwt/releases/download/v0.8.1/net.koyashiro.udonjwt-0.1.0.zip",
   "vpmDependencies": {
     "com.vrchat.udonsharp": "1.1.6",
-    "net.koyashiro.udonencoding": "0.3.0",
+    "net.koyashiro.udonencoding": "0.4.0",
     "net.koyashiro.udonjson": "0.10.0"
   }
 }

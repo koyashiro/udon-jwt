@@ -13,7 +13,7 @@
       "version": "0.4.1"
     },
     "net.koyashiro.udonencoding": {
-      "version": "0.3.0"
+      "version": "0.4.0"
     },
     "net.koyashiro.udonjson": {
       "version": "0.10.0"
@@ -71,7 +71,7 @@
       }
     },
     "net.koyashiro.udonencoding": {
-      "version": "0.3.0",
+      "version": "0.4.1",
       "dependencies": {
         "com.vrchat.udonsharp": "1.1.6"
       }

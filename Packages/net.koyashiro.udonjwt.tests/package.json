@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "vpmDependencies": {
     "com.vrchat.udonsharp": "1.1.6",
-    "net.koyashiro.udonencoding": "0.3.0",
+    "net.koyashiro.udonencoding": "0.4.0",
     "net.koyashiro.udonjson": "0.10.0",
     "net.koyashiro.udontest": "0.4.1"
   }
