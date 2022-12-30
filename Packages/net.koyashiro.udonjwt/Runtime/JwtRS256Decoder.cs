@@ -132,7 +132,12 @@ namespace Koyashiro.UdonJwt
                 return false;
             }
 
-            var str = UdonUTF8.GetString(bytes);
+            if (!UdonUTF8.TryGetString(bytes, out var str))
+            {
+                value = default;
+                return false;
+            }
+
             return UdonJsonDeserializer.TryDeserialize(str, out value);
         }
 
