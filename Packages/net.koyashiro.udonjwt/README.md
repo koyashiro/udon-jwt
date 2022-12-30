@@ -1,1 +1,1 @@
-# net.koyashiro.udonjwt by koyashiro
+# udon-jwt
