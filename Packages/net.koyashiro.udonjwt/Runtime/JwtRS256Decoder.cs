@@ -9,6 +9,7 @@ using Koyashiro.UdonJwt.PKCS1;
 
 namespace Koyashiro.UdonJwt
 {
+    [UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public class JwtRS256Decoder : UdonSharpBehaviour
     {
         [SerializeField, TextArea(10, 20)]
