@@ -3,6 +3,7 @@ using Koyashiro.UdonJson;
 
 namespace Koyashiro.UdonJwt
 {
+    [UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public abstract class JwtDecorderCallback : UdonSharpBehaviour
     {
         private object _header;

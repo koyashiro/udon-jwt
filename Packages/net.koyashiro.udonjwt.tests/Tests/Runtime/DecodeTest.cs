@@ -1,9 +1,10 @@
 using UnityEngine;
+using UdonSharp;
 using Koyashiro.UdonTest;
-using Koyashiro.UdonJwt.Numerics;
 
 namespace Koyashiro.UdonJwt.Tests
 {
+    [UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public class DecodeTest : JwtDecorderCallback
     {
         [SerializeField]
