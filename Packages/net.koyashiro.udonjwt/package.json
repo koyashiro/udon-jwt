@@ -1,7 +1,7 @@
 {
   "name": "net.koyashiro.udonjwt",
   "displayName": "UdonJwt",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "JWT library for UdonSharp.",
   "homepage": "https://github.com/koyashiro/udon-jwt",
   "bugs": {
@@ -18,7 +18,7 @@
     "url": "https://github.com/koyashiro/udon-jwt"
   },
   "samples": [],
-  "url": "https://github.com/koyashiro/udon-jwt/releases/download/v0.1.1/net.koyashiro.udonjwt-0.1.1.zip",
+  "url": "https://github.com/koyashiro/udon-jwt/releases/download/v0.1.2/net.koyashiro.udonjwt-0.1.2.zip",
   "vpmDependencies": {
     "com.vrchat.udonsharp": "1.1.6",
     "net.koyashiro.udonencoding": "0.4.0",
