@@ -16,7 +16,7 @@
       "version": "0.4.0"
     },
     "net.koyashiro.udonjson": {
-      "version": "0.10.0"
+      "version": "0.10.1"
     }
   },
   "locked": {
@@ -52,10 +52,10 @@
       }
     },
     "net.koyashiro.udondictionary": {
-      "version": "0.8.0",
+      "version": "0.9.1",
       "dependencies": {
         "com.vrchat.udonsharp": "1.1.6",
-        "net.koyashiro.udonlist": "0.14.0"
+        "net.koyashiro.udonlist": "0.14.1"
       }
     },
     "net.koyashiro.udonexception": {
@@ -65,7 +65,7 @@
       }
     },
     "net.koyashiro.udonlist": {
-      "version": "0.14.0",
+      "version": "0.14.1",
       "dependencies": {
         "com.vrchat.udonsharp": "1.1.6"
       }
@@ -77,11 +77,11 @@
       }
     },
     "net.koyashiro.udonjson": {
-      "version": "0.10.0",
+      "version": "0.10.1",
       "dependencies": {
         "com.vrchat.udonsharp": "1.1.6",
-        "net.koyashiro.udondictionary": "0.8.0",
-        "net.koyashiro.udonlist": "0.14.0"
+        "net.koyashiro.udondictionary": "0.9.1",
+        "net.koyashiro.udonlist": "0.14.1"
       }
     }
   }
