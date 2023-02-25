@@ -3,7 +3,7 @@
   "displayName": "UdonJwt.Tests",
   "version": "0.1.2",
   "vpmDependencies": {
-    "com.vrchat.udonsharp": "1.1.6",
+    "com.vrchat.udonsharp": "1.1.7",
     "net.koyashiro.udonencoding": "0.4.0",
     "net.koyashiro.udonjson": "0.10.1",
     "net.koyashiro.udonjwt": "0.1.2",
