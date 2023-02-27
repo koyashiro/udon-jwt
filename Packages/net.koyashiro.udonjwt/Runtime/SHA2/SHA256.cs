@@ -23,15 +23,10 @@ namespace Koyashiro.UdonJwt.SHA2
             var hBuf = new uint[] { 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 };
 
             var paddedBuffer = Pad(buffer);
-            var m = Divide(paddedBuffer);
+            var wb = Divide(paddedBuffer);
 
-            foreach (var mi in m)
+            foreach (var w in wb)
             {
-                var w = new uint[MESSAGE_BLOCK_LENGTH];
-                for (var i = 0; i < 16; i++)
-                {
-                    w[i] = ((uint)mi[4 * i] << 24) | ((uint)mi[4 * i + 1] << 16) | ((uint)mi[4 * i + 2] << 8) | ((uint)mi[4 * i + 3]);
-                }
                 for (var i = 16; i < MESSAGE_BLOCK_LENGTH; i++)
                 {
                     w[i] = SmallSigma1(w[i - 2]) + w[i - 7] + SmallSigma0(w[i - 15]) + w[i - 16];
@@ -103,18 +98,23 @@ namespace Koyashiro.UdonJwt.SHA2
             return buffer;
         }
 
-        private static byte[][] Divide(byte[] input)
+        private static uint[][] Divide(byte[] input)
         {
             var inputLength = input.LongLength;
             var mLength = inputLength / MESSAGE_BLOCK_LENGTH;
-            var m = new byte[mLength][];
+            var mu = new uint[mLength][];
             for (var i = 0; i < mLength; i++)
             {
-                var mi = new byte[MESSAGE_BLOCK_LENGTH];
-                Array.Copy(input, i * MESSAGE_BLOCK_LENGTH, mi, 0, MESSAGE_BLOCK_LENGTH);
-                m[i] = mi;
+                mu[i] = new uint[MESSAGE_BLOCK_LENGTH];
+                var ix = i * MESSAGE_BLOCK_LENGTH;
+                for (var j = 0; j < 16; j++)
+                {
+                    var ifs = ix + (4 * j);
+                    mu[i][j] = ((uint)input[ifs] << 24) | ((uint)input[ifs + 1] << 16) | ((uint)input[ifs + 2] << 8) | ((uint)input[ifs + 3]);
+                }
             }
-            return m;
+
+            return mu;
         }
 
         private static uint Ch(uint x, uint y, uint z)
