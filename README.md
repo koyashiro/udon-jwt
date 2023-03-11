@@ -1,4 +1,4 @@
-# udon-jwt
+# UdonJWT
 
 ## Installation
 
