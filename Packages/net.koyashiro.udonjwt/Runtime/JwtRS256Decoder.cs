@@ -1,8 +1,8 @@
 using System;
-using UnityEngine;
-using VRC.SDKBase;
 using UdonSharp;
-using Koyashiro.UdonJson;
+using UnityEngine;
+using VRC.SDK3.Data;
+using VRC.SDKBase;
 using Koyashiro.UdonEncoding;
 using Koyashiro.UdonJwt.Numerics;
 using Koyashiro.UdonJwt.PKCS1;
@@ -34,8 +34,8 @@ namespace Koyashiro.UdonJwt
 
         private JwtDecorderCallback _callback;
 
-        private object _headerJson;
-        private object _payloadJson;
+        private DataToken _headerJson;
+        private DataToken _payloadJson;
 
         private string _tokenHashSource;
         private uint _totalStep;
@@ -125,7 +125,7 @@ namespace Koyashiro.UdonJwt
             _callback.Progress = default;
         }
 
-        private static bool TryParseBase64Url(string base64Url, out UdonJsonValue value)
+        private static bool TryParseBase64Url(string base64Url, out DataToken value)
         {
             if (!TryFromBase64Url(base64Url, out var bytes))
             {
@@ -139,10 +139,10 @@ namespace Koyashiro.UdonJwt
                 return false;
             }
 
-            return UdonJsonDeserializer.TryDeserialize(str, out value);
+            return VRCJson.TryDeserializeFromJson(str, out value);
         }
 
-        private static bool TryParseHeaderBase64Url(string headerBase64Url, out UdonJsonValue headerJson)
+        private static bool TryParseHeaderBase64Url(string headerBase64Url, out DataToken headerJson)
         {
             if (!TryParseBase64Url(headerBase64Url, out headerJson))
             {
@@ -150,25 +150,25 @@ namespace Koyashiro.UdonJwt
                 return false;
             }
 
-            if (headerJson.GetKind() != UdonJsonValueKind.Object)
+            if (headerJson.TokenType != TokenType.DataDictionary)
             {
                 headerJson = default;
                 return false;
             }
 
-            if (!headerJson.TryGetValue("alg", out var algorithmValue))
+            if (!headerJson.DataDictionary.TryGetValue("alg", out var algorithmValue))
             {
                 headerJson = default;
                 return false;
             }
 
-            if (algorithmValue.GetKind() != UdonJsonValueKind.String)
+            if (algorithmValue.TokenType != TokenType.String)
             {
                 headerJson = default;
                 return false;
             }
 
-            var algorithm = algorithmValue.AsString();
+            var algorithm = algorithmValue.String;
             if (algorithm != "RS256")
             {
                 headerJson = default;
@@ -177,8 +177,7 @@ namespace Koyashiro.UdonJwt
 
             return true;
         }
-
-        private static bool TryParsePayloadBase64Url(string payloadBase64Url, out UdonJsonValue payloadJson)
+        private static bool TryParsePayloadBase64Url(string payloadBase64Url, out DataToken payloadJson)
         {
             if (!TryParseBase64Url(payloadBase64Url, out payloadJson))
             {
@@ -186,7 +185,7 @@ namespace Koyashiro.UdonJwt
                 return false;
             }
 
-            if (payloadJson.GetKind() != UdonJsonValueKind.Object)
+            if (payloadJson.TokenType != TokenType.DataDictionary)
             {
                 return false;
             }
@@ -301,19 +300,16 @@ namespace Koyashiro.UdonJwt
                 }
             }
 
-            var headerJson = (UdonJsonValue)_headerJson;
-            var payloadJson = (UdonJsonValue)_payloadJson;
-
             // Expiration check
-            if (payloadJson.TryGetValue("exp", out var expirationValue))
+            if (_payloadJson.DataDictionary.TryGetValue("exp", out var expirationValue))
             {
-                if (expirationValue.GetKind() != UdonJsonValueKind.Number)
+                if (!expirationValue.IsNumber)
                 {
                     DecodeError(JwtDecodeErrorKind.InvalidToken);
                     return;
                 }
 
-                var expiration = (long)expirationValue.AsNumber();
+                var expiration = (long)expirationValue.Number;
                 var nowUnixTime = GetNowUnixTime();
                 if (expiration < nowUnixTime)
                 {
@@ -325,8 +321,8 @@ namespace Koyashiro.UdonJwt
             // JWT decode is success
             _callback.Result = true;
             _callback.ErrorKind = JwtDecodeErrorKind.None;
-            _callback.Header = headerJson;
-            _callback.Payload = payloadJson;
+            _callback.Header = _headerJson;
+            _callback.Payload = _payloadJson;
             _callback.Progress = 1;
             _callback.OnProgress();
             _callback.OnEnd();
@@ -344,8 +340,8 @@ namespace Koyashiro.UdonJwt
         {
             _callback.Result = false;
             _callback.ErrorKind = errorKind;
-            _callback.Header = null;
-            _callback.Payload = null;
+            _callback.Header = default;
+            _callback.Payload = default;
             _callback.Progress = 1;
             _callback.OnProgress();
             _callback.OnEnd();

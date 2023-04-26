@@ -548,7 +548,7 @@ MonoBehaviour:
       Data: 35|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: System.Object, mscorlib
+      Data: VRC.SDK3.Data.DataToken, VRCSDK3
     - Name: 
       Entry: 8
       Data: 

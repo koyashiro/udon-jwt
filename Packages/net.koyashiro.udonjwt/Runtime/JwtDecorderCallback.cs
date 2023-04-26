@@ -1,27 +1,16 @@
 using UdonSharp;
-using Koyashiro.UdonJson;
+using VRC.SDK3.Data;
 
 namespace Koyashiro.UdonJwt
 {
     [UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public abstract class JwtDecorderCallback : UdonSharpBehaviour
     {
-        private object _header;
-        private object _payload;
-
         public float Progress { get; set; }
         public bool Result { get; set; }
 
-        public UdonJsonValue Header
-        {
-            get => (UdonJsonValue)_header;
-            set => _header = value;
-        }
-        public UdonJsonValue Payload
-        {
-            get => (UdonJsonValue)_payload;
-            set => _payload = value;
-        }
+        public DataToken Header { get; set; }
+        public DataToken Payload { get; set; }
 
         public JwtDecodeErrorKind ErrorKind { get; set; }
         virtual public void OnProgress() { }
