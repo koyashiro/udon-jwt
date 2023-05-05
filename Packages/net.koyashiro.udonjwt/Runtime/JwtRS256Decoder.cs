@@ -34,8 +34,8 @@ namespace Koyashiro.UdonJwt
 
         private JwtDecorderCallback _callback;
 
-        private DataToken _headerJson;
-        private DataToken _payloadJson;
+        private DataDictionary _headerJson;
+        private DataDictionary _payloadJson;
 
         private string _tokenHashSource;
         private uint _totalStep;
@@ -86,14 +86,14 @@ namespace Koyashiro.UdonJwt
                 DecodeError(JwtDecodeErrorKind.InvalidToken);
                 return;
             }
-            _headerJson = headerJson;
+            _headerJson = headerJson.DataDictionary;
 
             if (!TryParsePayloadBase64Url(payload, out var payloadJson))
             {
                 DecodeError(JwtDecodeErrorKind.InvalidToken);
                 return;
             }
-            _payloadJson = payloadJson;
+            _payloadJson = payloadJson.DataDictionary;
 
             if (!TryFromBase64Url(signature, out var signatureBytes))
             {
@@ -301,7 +301,7 @@ namespace Koyashiro.UdonJwt
             }
 
             // Expiration check
-            if (_payloadJson.DataDictionary.TryGetValue("exp", out var expirationValue))
+            if (_payloadJson.TryGetValue("exp", out var expirationValue))
             {
                 if (!expirationValue.IsNumber)
                 {

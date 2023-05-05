@@ -9,8 +9,8 @@ namespace Koyashiro.UdonJwt
         public float Progress { get; set; }
         public bool Result { get; set; }
 
-        public DataToken Header { get; set; }
-        public DataToken Payload { get; set; }
+        public DataDictionary Header { get; set; }
+        public DataDictionary Payload { get; set; }
 
         public JwtDecodeErrorKind ErrorKind { get; set; }
         virtual public void OnProgress() { }
