@@ -221,6 +221,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "net.koyashiro.udonsha2": {
+      "version": "file:net.koyashiro.udonsha2",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "net.koyashiro.udontest": {
       "version": "file:net.koyashiro.udontest",
       "depth": 0,
