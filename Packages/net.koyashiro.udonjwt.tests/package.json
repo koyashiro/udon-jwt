@@ -1,12 +1,12 @@
 {
   "name": "net.koyashiro.udonjwt.tests",
   "displayName": "UdonJwt.Tests",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "vpmDependencies": {
     "com.vrchat.base": "^3.2.x",
     "com.vrchat.udonsharp": "1.1.8",
     "net.koyashiro.udonencoding": "0.4.4",
-    "net.koyashiro.udonjwt": "0.1.5",
+    "net.koyashiro.udonjwt": "0.1.6",
     "net.koyashiro.udontest": "0.5.2"
   }
 }
