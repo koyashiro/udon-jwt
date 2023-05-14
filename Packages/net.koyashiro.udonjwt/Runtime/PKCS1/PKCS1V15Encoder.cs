@@ -1,6 +1,6 @@
 using System;
 using Koyashiro.UdonJwt.Asn1;
-using Koyashiro.UdonJwt.SHA2;
+using Koyashiro.UdonSHA2;
 
 namespace Koyashiro.UdonJwt.PKCS1
 {
