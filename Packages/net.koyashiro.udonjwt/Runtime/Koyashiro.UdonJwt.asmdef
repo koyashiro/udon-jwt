@@ -3,8 +3,7 @@
     "references": [
         "UdonSharp.Runtime",
         "Koyashiro.UdonEncoding",
-        "Koyashiro.UdonSHA2",
-        "Koyashiro.UdonJson"
+        "Koyashiro.UdonSHA2"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
