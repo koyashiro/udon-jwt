@@ -26,5 +26,5 @@
     "net.koyashiro.udonencoding": "^0.4.x",
     "net.koyashiro.udonsha2": "^0.1.x"
   },
-  "repo": "https://vpm.koyashiro.net/repos.json"
+  "repo": "https://vpm.koyashiro.net/index.json"
 }
