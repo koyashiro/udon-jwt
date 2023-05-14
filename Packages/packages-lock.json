@@ -185,20 +185,14 @@
         "com.unity.textmeshpro": "2.1.6"
       }
     },
-    "net.koyashiro.udondictionary": {
-      "version": "file:net.koyashiro.udondictionary",
+    "net.koyashiro.genericdatacontainer": {
+      "version": "file:net.koyashiro.genericdatacontainer",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
     },
     "net.koyashiro.udonencoding": {
       "version": "file:net.koyashiro.udonencoding",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {}
-    },
-    "net.koyashiro.udonjson": {
-      "version": "file:net.koyashiro.udonjson",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
@@ -211,12 +205,6 @@
     },
     "net.koyashiro.udonjwt.tests": {
       "version": "file:net.koyashiro.udonjwt.tests",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {}
-    },
-    "net.koyashiro.udonlist": {
-      "version": "file:net.koyashiro.udonlist",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
