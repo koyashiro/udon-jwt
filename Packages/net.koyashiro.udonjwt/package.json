@@ -20,9 +20,9 @@
   "samples": [],
   "url": "https://github.com/koyashiro/udon-jwt/releases/download/v0.1.5/net.koyashiro.udonjwt-0.1.5.zip",
   "vpmDependencies": {
-    "com.vrchat.udonsharp": "1.1.7",
-    "net.koyashiro.udonencoding": "0.4.3",
-    "net.koyashiro.udonjson": "0.11.0"
+    "com.vrchat.udonsharp": "^1.1.8",
+    "net.koyashiro.udonencoding": "^0.4.x",
+    "net.koyashiro.udonjson": "^0.11.x"
   },
   "repo": "https://vpm.koyashiro.net/repos.json"
 }
