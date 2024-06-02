@@ -1,11 +1,11 @@
+using Koyashiro.UdonJwt.Numerics;
+using Koyashiro.UdonJwt.PKCS1;
 using System;
+using System.Text;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDK3.Data;
 using VRC.SDKBase;
-using Koyashiro.UdonEncoding;
-using Koyashiro.UdonJwt.Numerics;
-using Koyashiro.UdonJwt.PKCS1;
 
 namespace Koyashiro.UdonJwt
 {
@@ -132,13 +132,7 @@ namespace Koyashiro.UdonJwt
                 value = default;
                 return false;
             }
-
-            if (!UdonUTF8.TryGetString(bytes, out var str))
-            {
-                value = default;
-                return false;
-            }
-
+            var str = Encoding.UTF8.GetString(bytes);
             return VRCJson.TryDeserializeFromJson(str, out value);
         }
 
@@ -283,7 +277,7 @@ namespace Koyashiro.UdonJwt
         public void _VerifyHash()
         {
             var em = UnsignedBigInteger.ToBytes(_modPowBuf);
-            var emPrime = PKCS1V15Encoder.Encode(UdonUTF8.GetBytes(_tokenHashSource));
+            var emPrime = PKCS1V15Encoder.Encode(Encoding.UTF8.GetBytes(_tokenHashSource));
 
             if (em.Length != emPrime.Length)
             {
