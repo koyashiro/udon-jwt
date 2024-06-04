@@ -3,8 +3,8 @@
   "displayName": "UdonJwt.Tests",
   "version": "0.2.0",
   "vpmDependencies": {
-    "com.vrchat.base": "^3.2.x",
-    "com.vrchat.udonsharp": "1.1.8",
+    "com.vrchat.base": "^3.5.2",
+    "com.vrchat.worlds": "^3.5.2",
     "net.koyashiro.udonjwt": "0.2.0",
     "net.koyashiro.udontest": "0.5.2"
   }
