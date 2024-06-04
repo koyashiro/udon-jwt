@@ -228,12 +228,6 @@
       "source": "embedded",
       "dependencies": {}
     },
-    "net.koyashiro.udonencoding": {
-      "version": "file:net.koyashiro.udonencoding",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {}
-    },
     "net.koyashiro.udonjwt": {
       "version": "file:net.koyashiro.udonjwt",
       "depth": 0,
