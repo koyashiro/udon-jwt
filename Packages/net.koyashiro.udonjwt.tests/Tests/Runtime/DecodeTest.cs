@@ -5,7 +5,7 @@ using Koyashiro.UdonTest;
 namespace Koyashiro.UdonJwt.Tests
 {
     [UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
-    public class DecodeTest : JwtDecorderCallback
+    public class DecodeTest : JwtDecoderCallback
     {
         [SerializeField]
         private JwtRS256Decoder _decoder;
