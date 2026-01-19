@@ -69,3 +69,6 @@ Exports/
 
 # Visual Studio
 .vsconfig
+
+# ClientSim
+ClientSimStorage/

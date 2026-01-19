@@ -1,10 +1,7 @@
 {
   "dependencies": {
-    "com.vrchat.core.vpm-resolver": {
-      "version": "0.1.29"
-    },
     "com.vrchat.worlds": {
-      "version": "3.6.1"
+      "version": "3.10.1"
     },
     "net.koyashiro.udontest": {
       "version": "0.5.2"
@@ -13,22 +10,18 @@
       "version": "0.1.1"
     },
     "net.koyashiro.genericdatacontainer": {
-      "version": "0.2.1"
+      "version": "0.2.2"
     }
   },
   "locked": {
     "com.vrchat.worlds": {
-      "version": "3.6.1",
+      "version": "3.10.1",
       "dependencies": {
-        "com.vrchat.base": "3.6.1"
+        "com.vrchat.base": "3.10.1"
       }
     },
     "com.vrchat.base": {
-      "version": "3.6.1",
-      "dependencies": {}
-    },
-    "com.vrchat.core.vpm-resolver": {
-      "version": "0.1.29",
+      "version": "3.10.1",
       "dependencies": {}
     },
     "net.koyashiro.udontest": {
@@ -45,7 +38,7 @@
       }
     },
     "net.koyashiro.genericdatacontainer": {
-      "version": "0.2.1",
+      "version": "0.2.2",
       "dependencies": {
         "com.vrchat.base": "^3.2.x",
         "com.vrchat.udonsharp": "^1.1.8"
