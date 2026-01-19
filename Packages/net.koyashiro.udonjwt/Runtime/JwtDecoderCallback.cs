@@ -4,7 +4,7 @@ using VRC.SDK3.Data;
 namespace Koyashiro.UdonJwt
 {
     [UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
-    public abstract class JwtDecorderCallback : UdonSharpBehaviour
+    public abstract class JwtDecoderCallback : UdonSharpBehaviour
     {
         public float Progress { get; set; }
         public bool Result { get; set; }

@@ -32,7 +32,7 @@ namespace Koyashiro.UdonJwt
         public bool IsBusy => _isBusy;
         private bool _isBusy;
 
-        private JwtDecorderCallback _callback;
+        private JwtDecoderCallback _callback;
 
         private DataDictionary _headerJson;
         private DataDictionary _payloadJson;
@@ -53,7 +53,7 @@ namespace Koyashiro.UdonJwt
             _nPrime = nPrime;
         }
 
-        public void Decode(string token, JwtDecorderCallback callback)
+        public void Decode(string token, JwtDecoderCallback callback)
         {
             if (_isBusy)
             {
@@ -110,7 +110,7 @@ namespace Koyashiro.UdonJwt
             ModPow(UnsignedBigInteger.FromBytesBE(signatureBytes));
         }
 
-        private void InitializeParameters(JwtDecorderCallback callback)
+        private void InitializeParameters(JwtDecoderCallback callback)
         {
             _eBuf = _e;
             _headerJson = default;

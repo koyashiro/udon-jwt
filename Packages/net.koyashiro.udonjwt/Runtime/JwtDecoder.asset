@@ -488,7 +488,7 @@ MonoBehaviour:
       Data: 31|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Koyashiro.UdonJwt.JwtDecorderCallback, Koyashiro.UdonJwt
+      Data: Koyashiro.UdonJwt.JwtDecoderCallback, Koyashiro.UdonJwt
     - Name: 
       Entry: 8
       Data: 
